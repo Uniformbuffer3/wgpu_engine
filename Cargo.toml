@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 log = "*"
-wgpu = {path="../wgpu/wgpu"}
+wgpu = {git="https://github.com/Uniformbuffer3/wgpu",branch="external_memory_direct_display"}
 vecstorage = "*"
 tokio = {version="*",features=["rt-multi-thread","sync"]}
 tokio-scoped = {git="https://github.com/jaboatman/tokio-scoped"}
