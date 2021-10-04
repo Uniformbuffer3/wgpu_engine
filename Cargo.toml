@@ -14,7 +14,7 @@ tokio = {version="*",features=["rt-multi-thread","sync"]}
 tokio-scoped = {git="https://github.com/jaboatman/tokio-scoped"}
 tokio-stream = "*"
 petgraph = "*"
-pal = {version="*",path="../pal",features=["xcb_platform","parry2d","wgpu_backend"],default-features=false,optional = true}
+pal = {version="*",git="https://github.com/Uniformbuffer3/platform_abstraction_layer.git",features=["xcb_platform","parry2d","wgpu_backend"],default-features=false,optional = true}
 raw-window-handle = "*"
 bytemuck = {version="*",features = ["derive"]}
 field-offset = "*"
