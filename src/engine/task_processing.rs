@@ -14,7 +14,7 @@ impl super::WGpuEngine {
     >(
         &mut self,
         name: String,
-        features_and_limits: (wgpu::Features, wgpu::Limits),
+        features_and_limits: (crate::wgpu::Features, crate::wgpu::Limits),
         callback: C,
     ) -> Option<TaskId> {
         create_task(
@@ -54,7 +54,7 @@ pub fn create_task<
     tokio: &tokio::runtime::Handle,
     name: String,
     dependencies: Vec<TaskId>,
-    features_and_limits: impl Into<(wgpu::Features, wgpu::Limits)>,
+    features_and_limits: impl Into<(crate::wgpu::Features, crate::wgpu::Limits)>,
     callback: C,
 ) -> Option<TaskId> {
     let descriptor = TaskDescriptor::new(name, dependencies);

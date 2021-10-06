@@ -32,13 +32,13 @@ impl<D: bytemuck::Pod + Sized, A> BufferManager<D, A> {
         label: String,
         device: DeviceId,
         capacity: usize,
-        usages: wgpu::BufferUsage,
+        usages: crate::wgpu::BufferUsage,
     ) -> Self {
         let descriptor = BufferDescriptor {
             label: label.clone() + " buffer",
             device,
             size: (capacity * std::mem::size_of::<D>()) as u64,
-            usage: wgpu::BufferUsage::COPY_SRC | wgpu::BufferUsage::COPY_DST | usages,
+            usage: crate::wgpu::BufferUsage::COPY_SRC | crate::wgpu::BufferUsage::COPY_DST | usages,
         };
 
         let buffer = update_context

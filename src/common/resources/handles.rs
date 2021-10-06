@@ -1,23 +1,23 @@
 use std::convert::TryInto;
 use std::sync::{Arc, Mutex, MutexGuard};
 
-pub type InstanceHandle = Arc<wgpu::Instance>;
-pub type DeviceHandle = Arc<(wgpu::Adapter, wgpu::Device, wgpu::Queue)>;
+pub type InstanceHandle = Arc<crate::wgpu::Instance>;
+pub type DeviceHandle = Arc<(crate::wgpu::Adapter, crate::wgpu::Device, crate::wgpu::Queue)>;
 pub type SwapchainHandle = Arc<Swapchain>;
 
-pub type BufferHandle = Arc<wgpu::Buffer>;
-pub type TextureHandle = Arc<wgpu::Texture>;
-pub type TextureViewHandle = Arc<wgpu::TextureView>;
-pub type SamplerHandle = Arc<wgpu::Sampler>;
-pub type ShaderModuleHandle = Arc<wgpu::ShaderModule>;
+pub type BufferHandle = Arc<crate::wgpu::Buffer>;
+pub type TextureHandle = Arc<crate::wgpu::Texture>;
+pub type TextureViewHandle = Arc<crate::wgpu::TextureView>;
+pub type SamplerHandle = Arc<crate::wgpu::Sampler>;
+pub type ShaderModuleHandle = Arc<crate::wgpu::ShaderModule>;
 
-pub type BindGroupLayoutHandle = Arc<wgpu::BindGroupLayout>;
-pub type BindGroupHandle = Arc<wgpu::BindGroup>;
+pub type BindGroupLayoutHandle = Arc<crate::wgpu::BindGroupLayout>;
+pub type BindGroupHandle = Arc<crate::wgpu::BindGroup>;
 
-pub type PipelineLayoutHandle = Arc<wgpu::PipelineLayout>;
-pub type RenderPipelineHandle = Arc<wgpu::RenderPipeline>;
-pub type ComputePipelineHandle = Arc<wgpu::ComputePipeline>;
-pub type CommandBufferHandle = Arc<wgpu::CommandBuffer>;
+pub type PipelineLayoutHandle = Arc<crate::wgpu::PipelineLayout>;
+pub type RenderPipelineHandle = Arc<crate::wgpu::RenderPipeline>;
+pub type ComputePipelineHandle = Arc<crate::wgpu::ComputePipeline>;
+pub type CommandBufferHandle = Arc<crate::wgpu::CommandBuffer>;
 
 #[derive(Debug, Clone)]
 pub enum ResourceHandle {
@@ -55,9 +55,9 @@ impl From<SwapchainHandle> for ResourceHandle {
     }
 }
 
-impl TryInto<Arc<wgpu::Buffer>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::Buffer>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::Buffer>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::Buffer>, Self::Error> {
         if let ResourceHandle::Buffer(handle) = self {
             Ok(handle)
         } else {
@@ -65,15 +65,15 @@ impl TryInto<Arc<wgpu::Buffer>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::Buffer>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::Buffer>) -> Self {
+impl From<Arc<crate::wgpu::Buffer>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::Buffer>) -> Self {
         Self::Buffer(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::Texture>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::Texture>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::Texture>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::Texture>, Self::Error> {
         if let ResourceHandle::Texture(handle) = self {
             Ok(handle)
         } else {
@@ -81,15 +81,15 @@ impl TryInto<Arc<wgpu::Texture>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::Texture>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::Texture>) -> Self {
+impl From<Arc<crate::wgpu::Texture>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::Texture>) -> Self {
         Self::Texture(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::TextureView>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::TextureView>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::TextureView>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::TextureView>, Self::Error> {
         if let ResourceHandle::TextureView(handle) = self {
             Ok(handle)
         } else {
@@ -97,15 +97,15 @@ impl TryInto<Arc<wgpu::TextureView>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::TextureView>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::TextureView>) -> Self {
+impl From<Arc<crate::wgpu::TextureView>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::TextureView>) -> Self {
         Self::TextureView(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::Sampler>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::Sampler>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::Sampler>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::Sampler>, Self::Error> {
         if let ResourceHandle::Sampler(handle) = self {
             Ok(handle)
         } else {
@@ -113,15 +113,15 @@ impl TryInto<Arc<wgpu::Sampler>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::Sampler>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::Sampler>) -> Self {
+impl From<Arc<crate::wgpu::Sampler>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::Sampler>) -> Self {
         Self::Sampler(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::ShaderModule>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::ShaderModule>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::ShaderModule>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::ShaderModule>, Self::Error> {
         if let ResourceHandle::ShaderModule(handle) = self {
             Ok(handle)
         } else {
@@ -129,15 +129,15 @@ impl TryInto<Arc<wgpu::ShaderModule>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::ShaderModule>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::ShaderModule>) -> Self {
+impl From<Arc<crate::wgpu::ShaderModule>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::ShaderModule>) -> Self {
         Self::ShaderModule(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::BindGroup>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::BindGroup>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::BindGroup>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::BindGroup>, Self::Error> {
         if let ResourceHandle::BindGroup(handle) = self {
             Ok(handle)
         } else {
@@ -145,15 +145,15 @@ impl TryInto<Arc<wgpu::BindGroup>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::BindGroup>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::BindGroup>) -> Self {
+impl From<Arc<crate::wgpu::BindGroup>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::BindGroup>) -> Self {
         Self::BindGroup(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::BindGroupLayout>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::BindGroupLayout>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::BindGroupLayout>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::BindGroupLayout>, Self::Error> {
         if let ResourceHandle::BindGroupLayout(handle) = self {
             Ok(handle)
         } else {
@@ -161,15 +161,15 @@ impl TryInto<Arc<wgpu::BindGroupLayout>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::BindGroupLayout>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::BindGroupLayout>) -> Self {
+impl From<Arc<crate::wgpu::BindGroupLayout>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::BindGroupLayout>) -> Self {
         Self::BindGroupLayout(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::PipelineLayout>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::PipelineLayout>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::PipelineLayout>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::PipelineLayout>, Self::Error> {
         if let ResourceHandle::PipelineLayout(handle) = self {
             Ok(handle)
         } else {
@@ -177,15 +177,15 @@ impl TryInto<Arc<wgpu::PipelineLayout>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::PipelineLayout>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::PipelineLayout>) -> Self {
+impl From<Arc<crate::wgpu::PipelineLayout>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::PipelineLayout>) -> Self {
         Self::PipelineLayout(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::RenderPipeline>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::RenderPipeline>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::RenderPipeline>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::RenderPipeline>, Self::Error> {
         if let ResourceHandle::RenderPipeline(handle) = self {
             Ok(handle)
         } else {
@@ -193,15 +193,15 @@ impl TryInto<Arc<wgpu::RenderPipeline>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::RenderPipeline>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::RenderPipeline>) -> Self {
+impl From<Arc<crate::wgpu::RenderPipeline>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::RenderPipeline>) -> Self {
         Self::RenderPipeline(resource)
     }
 }
 
-impl TryInto<Arc<wgpu::ComputePipeline>> for ResourceHandle {
+impl TryInto<Arc<crate::wgpu::ComputePipeline>> for ResourceHandle {
     type Error = Self;
-    fn try_into(self) -> Result<Arc<wgpu::ComputePipeline>, Self::Error> {
+    fn try_into(self) -> Result<Arc<crate::wgpu::ComputePipeline>, Self::Error> {
         if let ResourceHandle::ComputePipeline(handle) = self {
             Ok(handle)
         } else {
@@ -209,37 +209,37 @@ impl TryInto<Arc<wgpu::ComputePipeline>> for ResourceHandle {
         }
     }
 }
-impl From<Arc<wgpu::ComputePipeline>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::ComputePipeline>) -> Self {
+impl From<Arc<crate::wgpu::ComputePipeline>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::ComputePipeline>) -> Self {
         Self::ComputePipeline(resource)
     }
 }
-impl From<Arc<wgpu::CommandBuffer>> for ResourceHandle {
-    fn from(resource: Arc<wgpu::CommandBuffer>) -> Self {
+impl From<Arc<crate::wgpu::CommandBuffer>> for ResourceHandle {
+    fn from(resource: Arc<crate::wgpu::CommandBuffer>) -> Self {
         Self::CommandBuffer(resource)
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct Swapchain {
-    swapchain_descriptor: wgpu::SwapChainDescriptor,
-    swapchain: Arc<wgpu::SwapChain>,
+    swapchain_descriptor: crate::wgpu::SwapChainDescriptor,
+    swapchain: Arc<crate::wgpu::SwapChain>,
 
-    current_frame: Arc<Mutex<Option<wgpu::SwapChainFrame>>>,
+    current_frame: Arc<Mutex<Option<crate::wgpu::SwapChainFrame>>>,
 }
 
 impl Swapchain {
     pub fn new(
-        device: &Arc<(wgpu::Adapter, wgpu::Device, wgpu::Queue)>,
-        surface: Arc<wgpu::Surface>,
+        device: &Arc<(crate::wgpu::Adapter, crate::wgpu::Device, crate::wgpu::Queue)>,
+        surface: Arc<crate::wgpu::Surface>,
         width: u32,
         height: u32,
     ) -> Option<Self> {
         // Create swapchain
-        let swapchain_descriptor = wgpu::SwapChainDescriptor {
-            usage: wgpu::TextureUsage::RENDER_ATTACHMENT,
+        let swapchain_descriptor = crate::wgpu::SwapChainDescriptor {
+            usage: crate::wgpu::TextureUsage::RENDER_ATTACHMENT,
             format: device.0.get_swap_chain_preferred_format(&surface).unwrap(),
-            present_mode: wgpu::PresentMode::Mailbox,
+            present_mode: crate::wgpu::PresentMode::Mailbox,
             width,
             height,
         };
@@ -273,7 +273,7 @@ impl Swapchain {
         current_frame.take();
     }
 
-    pub fn current_frame(&self) -> MutexGuard<Option<wgpu::SwapChainFrame>> {
+    pub fn current_frame(&self) -> MutexGuard<Option<crate::wgpu::SwapChainFrame>> {
         self.current_frame.lock().unwrap()
     }
 }

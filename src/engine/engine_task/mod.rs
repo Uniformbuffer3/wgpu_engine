@@ -7,7 +7,7 @@ enum PendingCommand {
     CreateSwapchain {
         external_id: usize,
         label: String,
-        surface: Arc<wgpu::Surface>,
+        surface: Arc<crate::wgpu::Surface>,
         width: u32,
         height: u32,
     },
@@ -41,12 +41,12 @@ impl EngineTask {
     ) -> Self {
         let (features, limits) = requirements.into().into();
 
-        let backend = wgpu::BackendBit::VULKAN;
+        let backend = crate::wgpu::BackendBit::VULKAN;
         let instance_descriptor = InstanceDescriptor {
             label: String::from("Engine"),
             backend,
         };
-        let instance_handle = Arc::new(wgpu::Instance::new(backend));
+        let instance_handle = Arc::new(crate::wgpu::Instance::new(backend));
 
         let instance =
             update_context.add_instance(instance_descriptor, Some(instance_handle.clone()));
@@ -77,7 +77,7 @@ impl EngineTask {
                     limits: limits.clone(),
                 };
 
-                let device_descriptor = wgpu::DeviceDescriptor {
+                let device_descriptor = crate::wgpu::DeviceDescriptor {
                     label: None,
                     features,
                     limits,
@@ -128,7 +128,7 @@ impl EngineTask {
         &mut self,
         external_id: usize,
         label: String,
-        surface: Arc<wgpu::Surface>,
+        surface: Arc<crate::wgpu::Surface>,
         width: u32,
         height: u32,
     ) {
@@ -187,8 +187,8 @@ impl TaskTrait for EngineTask {
                     .get_swap_chain_preferred_format(&surface)
                     .expect("Incompatible device");
 
-                let usage = wgpu::TextureUsage::RENDER_ATTACHMENT;
-                let present_mode = wgpu::PresentMode::Mailbox;
+                let usage = crate::wgpu::TextureUsage::RENDER_ATTACHMENT;
+                let present_mode = crate::wgpu::PresentMode::Mailbox;
 
                 let descriptor = SwapchainDescriptor {
                     label,

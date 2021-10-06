@@ -1053,7 +1053,6 @@ dependencies = [
 [[package]]
 name = "pal"
 version = "0.1.0"
-source = "git+https://github.com/Uniformbuffer3/platform_abstraction_layer.git#50f10886c02537e1d384964e71de952c9ea88b3d"
 dependencies = [
  "bitflags",
  "keyboard-types",
@@ -1063,7 +1062,8 @@ dependencies = [
  "petgraph 0.6.0",
  "raw-window-handle",
  "simple-matrix",
- "wgpu",
+ "wgpu 0.9.0",
+ "wgpu 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "x11rb",
 ]
 
@@ -1182,9 +1182,9 @@ checksum = "87dfd5592a8eed7e74f56ad7b125f8234763b805c30f0c7c95c486920026a6ec"
 
 [[package]]
 name = "quote"
-version = "1.0.9"
+version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3d0b9745dc2debf507c8422de05d7226cc1f0644216dfdfead988f9b1ab32a7"
+checksum = "38bc8cc6a5f2e3655e0899c1b848643b2562f853f114bfec7be120678e3ace05"
 dependencies = [
  "proc-macro2",
 ]
@@ -1448,9 +1448,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.78"
+version = "1.0.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4eac2e6c19f5c3abc0c229bea31ff0b9b091c7b14990e8924b92902a303a0c0"
+checksum = "d010a1623fbd906d51d650a9916aaefc05ffa0e4053ff7fe601167f3e715d194"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1659,7 +1659,6 @@ checksum = "d8b77fdfd5a253be4ab714e4ffa3c49caf146b4de743e97510c0656cf90f1e8e"
 [[package]]
 name = "wgpu"
 version = "0.9.0"
-source = "git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display#18c7bd7fcaf90d9847ea25fb14fce77922eefa2a"
 dependencies = [
  "arrayvec 0.5.2",
  "js-sys",
@@ -1671,14 +1670,33 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "wgpu-core",
- "wgpu-types",
+ "wgpu-core 0.9.1",
+ "wgpu-types 0.9.0",
+]
+
+[[package]]
+name = "wgpu"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd247f8b26fd3d42ef2f320d378025cd6e84d782ef749fab45cc3b981fbe3275"
+dependencies = [
+ "arrayvec 0.5.2",
+ "js-sys",
+ "log",
+ "naga",
+ "parking_lot",
+ "raw-window-handle",
+ "smallvec",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "wgpu-core 0.9.2",
+ "wgpu-types 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "wgpu-core"
 version = "0.9.1"
-source = "git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display#18c7bd7fcaf90d9847ea25fb14fce77922eefa2a"
 dependencies = [
  "arrayvec 0.5.2",
  "bitflags",
@@ -1701,13 +1719,51 @@ dependencies = [
  "raw-window-handle",
  "smallvec",
  "thiserror",
- "wgpu-types",
+ "wgpu-types 0.9.0",
+]
+
+[[package]]
+name = "wgpu-core"
+version = "0.9.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "958a8a5e418492723ab4e7933bf6dbdf06f5dc87274ba2ae0e4f9c891aac579c"
+dependencies = [
+ "arrayvec 0.5.2",
+ "bitflags",
+ "cfg_aliases",
+ "copyless",
+ "fxhash",
+ "gfx-backend-dx11",
+ "gfx-backend-dx12",
+ "gfx-backend-empty",
+ "gfx-backend-gl",
+ "gfx-backend-metal",
+ "gfx-backend-vulkan",
+ "gfx-hal",
+ "gpu-alloc",
+ "gpu-descriptor",
+ "log",
+ "naga",
+ "parking_lot",
+ "profiling",
+ "raw-window-handle",
+ "smallvec",
+ "thiserror",
+ "wgpu-types 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "wgpu-types"
 version = "0.9.0"
-source = "git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display#18c7bd7fcaf90d9847ea25fb14fce77922eefa2a"
+dependencies = [
+ "bitflags",
+]
+
+[[package]]
+name = "wgpu-types"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f5c9678cd533558e28b416d66947b099742df1939307478db54f867137f1b60"
 dependencies = [
  "bitflags",
 ]
@@ -1732,7 +1788,8 @@ dependencies = [
  "tokio-stream",
  "ultraviolet",
  "vecstorage",
- "wgpu",
+ "wgpu 0.9.0",
+ "wgpu 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

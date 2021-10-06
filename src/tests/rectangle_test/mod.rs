@@ -162,7 +162,7 @@ impl RectangleTask {
         let vertex_shader_descriptor = ShaderModuleDescriptor {
             label: String::from("RectangleTask vertex shader"),
             source: ShaderSource::SpirV(VERTEX_SHADER_CODE.to_vec()),
-            flags: wgpu::ShaderFlags::empty(),
+            flags: crate::wgpu::ShaderFlags::empty(),
         };
         let vertex_shader_id = update_context
             .add_resource_descriptor(vertex_shader_descriptor)
@@ -171,7 +171,7 @@ impl RectangleTask {
         let fragment_shader_descriptor = ShaderModuleDescriptor {
             label: String::from("RectangleTask fragment shader"),
             source: ShaderSource::SpirV(FRAGMENT_SHADER_CODE.to_vec()),
-            flags: wgpu::ShaderFlags::empty(),
+            flags: crate::wgpu::ShaderFlags::empty(),
         };
         let fragment_shader_id = update_context
             .add_resource_descriptor(fragment_shader_descriptor)
@@ -180,8 +180,8 @@ impl RectangleTask {
         let sampler_descriptor = SamplerDescriptor {
             label: Self::TASK_NAME.to_string() + " index buffer",
             anisotropy_clamp: Some(NonZeroU8::new(16).unwrap()),
-            min_filter: wgpu::FilterMode::Linear,
-            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: crate::wgpu::FilterMode::Linear,
+            mag_filter: crate::wgpu::FilterMode::Linear,
             ..SamplerDescriptor::default()
         };
         let sampler_id = update_context.add_resource_descriptor(sampler_descriptor).unwrap();
@@ -189,20 +189,20 @@ impl RectangleTask {
         let bind_group_layout = BindGroupLayoutDescriptor {
             label: Self::TASK_NAME.to_string() + " bind group layout",
             entries: vec![
-                wgpu::BindGroupLayoutEntry {
+                crate::wgpu::BindGroupLayoutEntry {
                     binding: 0,
-                    visibility: wgpu::ShaderStage::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                        view_dimension: wgpu::TextureViewDimension::D2,
+                    visibility: crate::wgpu::ShaderStage::FRAGMENT,
+                    ty: crate::wgpu::BindingType::Texture {
+                        sample_type: crate::wgpu::TextureSampleType::Float { filterable: true },
+                        view_dimension: crate::wgpu::TextureViewDimension::D2,
                         multisampled: false,
                     },
                     count: NonZeroU32::new(0),
                 },
-                wgpu::BindGroupLayoutEntry {
+                crate::wgpu::BindGroupLayoutEntry {
                     binding: 1,
-                    visibility: wgpu::ShaderStage::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler {
+                    visibility: crate::wgpu::ShaderStage::FRAGMENT,
+                    ty: crate::wgpu::BindingType::Sampler {
                         comparison: false,
                         filtering: true,
                     },
@@ -216,8 +216,8 @@ impl RectangleTask {
         let pipeline_layout_descriptor = PipelineLayoutDescriptor {
             label: task_name.clone(),
             bind_group_layouts: vec![bind_group_layout_id],
-            push_constant_ranges: vec![wgpu::PushConstantRange {
-                stages: wgpu::ShaderStage::VERTEX,
+            push_constant_ranges: vec![crate::wgpu::PushConstantRange {
+                stages: crate::wgpu::ShaderStage::VERTEX,
                 range: 0..aligned_size as u32,
             }],
         };
@@ -232,9 +232,9 @@ impl RectangleTask {
                 module: vertex_shader_id,
                 entry_point: String::from("main"),
                 buffers: vec![VertexBufferLayout {
-                    array_stride: std::mem::size_of::<Rectangle>() as wgpu::BufferAddress,
-                    step_mode: wgpu::InputStepMode::Instance,
-                    attributes: wgpu::vertex_attr_array![
+                    array_stride: std::mem::size_of::<Rectangle>() as crate::wgpu::BufferAddress,
+                    step_mode: crate::wgpu::InputStepMode::Instance,
+                    attributes: crate::wgpu::vertex_attr_array![
                         0 => Float32x3,
                         1 => Float32x2,
                         2 => Uint32,
@@ -242,12 +242,12 @@ impl RectangleTask {
                     .to_vec(),
                 }],
             },
-            primitive: wgpu::PrimitiveState {
-                //front_face: wgpu::FrontFace::Ccw,
-                topology: wgpu::PrimitiveTopology::TriangleStrip,
+            primitive: crate::wgpu::PrimitiveState {
+                //front_face: crate::wgpu::FrontFace::Ccw,
+                topology: crate::wgpu::PrimitiveTopology::TriangleStrip,
                 ..Default::default()
             },
-            multisample: wgpu::MultisampleState::default(),
+            multisample: crate::wgpu::MultisampleState::default(),
             fragment: Some(FragmentState {
                 module: fragment_shader_id,
                 entry_point: String::from("main"),
@@ -347,20 +347,20 @@ impl RectangleTask {
         let bind_group_layout = BindGroupLayoutDescriptor {
             label: Self::TASK_NAME.to_string() + " bind group layout",
             entries: vec![
-                wgpu::BindGroupLayoutEntry {
+                crate::wgpu::BindGroupLayoutEntry {
                     binding: 0,
-                    visibility: wgpu::ShaderStage::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                        view_dimension: wgpu::TextureViewDimension::D2,
+                    visibility: crate::wgpu::ShaderStage::FRAGMENT,
+                    ty: crate::wgpu::BindingType::Texture {
+                        sample_type: crate::wgpu::TextureSampleType::Float { filterable: true },
+                        view_dimension: crate::wgpu::TextureViewDimension::D2,
                         multisampled: false,
                     },
                     count: NonZeroU32::new(self.rectangle_manager.len() as u32),
                 },
-                wgpu::BindGroupLayoutEntry {
+                crate::wgpu::BindGroupLayoutEntry {
                     binding: 1,
-                    visibility: wgpu::ShaderStage::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler {
+                    visibility: crate::wgpu::ShaderStage::FRAGMENT,
+                    ty: crate::wgpu::BindingType::Sampler {
                         comparison: false,
                         filtering: true,
                     },
@@ -401,7 +401,7 @@ impl RectangleTask {
                         pipeline: self.render_pipeline_id,
                     },
                     RenderCommand::SetPushConstants {
-                        stages: wgpu::ShaderStage::VERTEX,
+                        stages: crate::wgpu::ShaderStage::VERTEX,
                         offset: 0,
                         data: push_constants,
                     },
@@ -507,14 +507,14 @@ fn rectangle_task() {
     use crate::WGpuEngine;
     use pal::definitions::*;
 
-    let features = wgpu::Features::EXTERNAL_MEMORY
-        | wgpu::Features::PUSH_CONSTANTS
-        | wgpu::Features::UNSIZED_BINDING_ARRAY
-        | wgpu::Features::SAMPLED_TEXTURE_BINDING_ARRAY
-        | wgpu::Features::SAMPLED_TEXTURE_ARRAY_DYNAMIC_INDEXING
-        | wgpu::Features::SAMPLED_TEXTURE_ARRAY_NON_UNIFORM_INDEXING;
+    let features = crate::wgpu::Features::EXTERNAL_MEMORY
+        | crate::wgpu::Features::PUSH_CONSTANTS
+        | crate::wgpu::Features::UNSIZED_BINDING_ARRAY
+        | crate::wgpu::Features::SAMPLED_TEXTURE_BINDING_ARRAY
+        | crate::wgpu::Features::SAMPLED_TEXTURE_ARRAY_DYNAMIC_INDEXING
+        | crate::wgpu::Features::SAMPLED_TEXTURE_ARRAY_NON_UNIFORM_INDEXING;
 
-    let mut limits = wgpu::Limits::default();
+    let mut limits = crate::wgpu::Limits::default();
     limits.max_push_constant_size = std::mem::size_of::<PushConstants>() as u32;
 
     let mut wgpu_engine = WGpuEngine::new(features, limits.clone());

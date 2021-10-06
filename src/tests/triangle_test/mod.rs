@@ -45,7 +45,7 @@ impl TriangleTask {
             label: Self::TASK_NAME.to_string(),
             device,
             source: ShaderSource::Wgsl(include_str!("shader.wgsl").to_string()),
-            flags: wgpu::ShaderFlags::VALIDATION,
+            flags: crate::wgpu::ShaderFlags::VALIDATION,
         };
         let shader_module = update_context
             .add_shader_module_descriptor(shader_module_descriptor)
@@ -108,16 +108,16 @@ impl TriangleTask {
                 entry_point: String::from("vs_main"),
                 buffers: Vec::new(),
             },
-            primitive: wgpu::PrimitiveState::default(),
+            primitive: crate::wgpu::PrimitiveState::default(),
             depth_stencil: None,
-            multisample: wgpu::MultisampleState::default(),
+            multisample: crate::wgpu::MultisampleState::default(),
             fragment: Some(FragmentState {
                 module: shader_module,
                 entry_point: String::from("fs_main"),
-                targets: vec![wgpu::ColorTargetState {
+                targets: vec![crate::wgpu::ColorTargetState {
                     format: formats[0],
                     blend: None,
-                    write_mask: wgpu::ColorWrite::ALL,
+                    write_mask: crate::wgpu::ColorWrite::ALL,
                 }],
             }),
         }
@@ -136,8 +136,8 @@ impl TriangleTask {
                 color_attachments: vec![RenderPassColorAttachment {
                     view: ColorView::Swapchain(*swapchain),
                     resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Load,
+                    ops: crate::wgpu::Operations {
+                        load: crate::wgpu::LoadOp::Load,
                         store: true,
                     },
                 }],
@@ -258,8 +258,8 @@ fn triangle_task() {
     env_logger::init();
     quick_run(
         2,
-        wgpu::Features::default(),
-        wgpu::Limits::default(),
+        crate::wgpu::Features::default(),
+        crate::wgpu::Limits::default(),
         |_id, _tokio_runtime, update_context| TriangleTask::new(update_context)
     )
 /*
@@ -268,8 +268,8 @@ fn triangle_task() {
     use crate::WGpuEngine;
     use pal::definitions::*;
 
-    let features = wgpu::Features::default();
-    let limits = wgpu::Limits::default();
+    let features = crate::wgpu::Features::default();
+    let limits = crate::wgpu::Limits::default();
     //limits.max_push_constant_size = std::mem::size_of::<PushConstants>() as u32;
 
     let mut wgpu_engine =

@@ -68,7 +68,7 @@ impl RectangleManager {
             update_context,
             String::from("RectangleManager buffer"),
             32,
-            wgpu::BufferUsage::VERTEX,
+            crate::wgpu::BufferUsage::VERTEX,
         );
         Self {
             rectangle_id_counter,
@@ -125,25 +125,25 @@ impl RectangleManager {
         let texture_descriptor = TextureDescriptor {
             label: label.clone() + " texture",
             source: TextureSource::Local,
-            size: wgpu::Extent3d {
+            size: crate::wgpu::Extent3d {
                 width,
                 height,
                 depth_or_array_layers,
             },
             mip_level_count: 1,
             sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba8UnormSrgb,
-            usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::COPY_DST,
+            dimension: crate::wgpu::TextureDimension::D2,
+            format: crate::wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: crate::wgpu::TextureUsage::SAMPLED | crate::wgpu::TextureUsage::COPY_DST,
         };
         let texture_id = update_context.add_resource_descriptor(texture_descriptor).unwrap();
 
         let texture_view_descriptor = TextureViewDescriptor {
             label: label + " texture view",
             texture: texture_id,
-            format: wgpu::TextureFormat::Rgba8UnormSrgb,
-            dimension: wgpu::TextureViewDimension::D2,
-            aspect: wgpu::TextureAspect::All,
+            format: crate::wgpu::TextureFormat::Rgba8UnormSrgb,
+            dimension: crate::wgpu::TextureViewDimension::D2,
+            aspect: crate::wgpu::TextureAspect::All,
             base_mip_level: 0,
             mip_level_count: None,
             base_array_layer: 0,
@@ -156,16 +156,16 @@ impl RectangleManager {
         let resource_write = ResourceWrite::Texture(TextureWrite {
             texture: texture_id,
             mip_level: 0,
-            origin: wgpu::Origin3d::ZERO,
+            origin: crate::wgpu::Origin3d::ZERO,
             data,
-            layout: wgpu::ImageDataLayout {
+            layout: crate::wgpu::ImageDataLayout {
                 offset: 0,
                 bytes_per_row: std::num::NonZeroU32::new(
                     sample_layout.width * sample_layout.channels as u32 * 1,
                 ),
                 rows_per_image: std::num::NonZeroU32::new(sample_layout.height),
             },
-            size: wgpu::Extent3d {
+            size: crate::wgpu::Extent3d {
                 width,
                 height,
                 depth_or_array_layers,

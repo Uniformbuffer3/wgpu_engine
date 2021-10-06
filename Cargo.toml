@@ -8,13 +8,14 @@ edition = "2018"
 
 [dependencies]
 log = "*"
-wgpu = {git="https://github.com/Uniformbuffer3/wgpu",branch="external_memory_direct_display"}
+wgpu_standard = {version="0.9",package="wgpu", optional=true}
+wgpu_custom = {git="https://github.com/Uniformbuffer3/wgpu",branch="external_memory_direct_display", package="wgpu", optional=true}
+pal = {version="*",git="https://github.com/Uniformbuffer3/platform_abstraction_layer.git",features=["xcb_platform","parry2d"],default-features=false,optional = true}
 vecstorage = "*"
 tokio = {version="*",features=["rt-multi-thread","sync"]}
 tokio-scoped = {git="https://github.com/jaboatman/tokio-scoped"}
 tokio-stream = "*"
 petgraph = "*"
-pal = {version="*",git="https://github.com/Uniformbuffer3/platform_abstraction_layer.git",features=["xcb_platform","parry2d","wgpu_backend"],default-features=false,optional = true}
 raw-window-handle = "*"
 bytemuck = {version="*",features = ["derive"]}
 field-offset = "*"
@@ -28,8 +29,14 @@ image = "*"
 ultraviolet = {version="*",features=["bytemuck"]}
 inline-spirv = "*"
 
-
 [features]
 multithreading = []
-default = ["pal"]
+wgpu_custom_backend = ["pal","pal/wgpu_custom_backend","wgpu_custom"]
+wgpu_standard_backend = ["pal","pal/wgpu_standard_backend","wgpu_standard"]
+default = ["wgpu_custom_backend"]
 
+#[patch."https://github.com/Uniformbuffer3/platform_abstraction_layer.git"]
+#pal = { path = "../pal"}
+
+#[patch."https://github.com/Uniformbuffer3/wgpu.git"]
+#wgpu_custom = { path = "../wgpu/wgpu" ,package="wgpu"}

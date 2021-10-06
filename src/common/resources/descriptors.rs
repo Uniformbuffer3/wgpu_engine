@@ -161,7 +161,7 @@ impl From<CommandBufferDescriptor> for ResourceDescriptor {
 #[derive(Debug, Clone, PartialEq)]
 pub struct InstanceDescriptor {
     pub label: String,
-    pub backend: wgpu::BackendBit,
+    pub backend: crate::wgpu::BackendBit,
 }
 impl HaveDependencies for InstanceDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -173,10 +173,10 @@ impl HaveDependencies for InstanceDescriptor {
 pub struct DeviceDescriptor {
     pub label: String,
     pub instance: InstanceId,
-    pub backend: wgpu::BackendBit,
+    pub backend: crate::wgpu::BackendBit,
     pub pci_id: usize,
-    pub features: wgpu::Features,
-    pub limits: wgpu::Limits,
+    pub features: crate::wgpu::Features,
+    pub limits: crate::wgpu::Limits,
 }
 impl HaveDependencies for DeviceDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -188,12 +188,12 @@ impl HaveDependencies for DeviceDescriptor {
 pub struct SwapchainDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub surface: std::sync::Arc<wgpu::Surface>,
-    pub usage: wgpu::TextureUsage,
-    pub format: wgpu::TextureFormat,
+    pub surface: std::sync::Arc<crate::wgpu::Surface>,
+    pub usage: crate::wgpu::TextureUsage,
+    pub format: crate::wgpu::TextureFormat,
     pub width: u32,
     pub height: u32,
-    pub present_mode: wgpu::PresentMode,
+    pub present_mode: crate::wgpu::PresentMode,
 }
 impl HaveDependencies for SwapchainDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -225,7 +225,7 @@ pub struct ShaderModuleDescriptor {
     pub label: String,
     pub device: DeviceId,
     pub source: ShaderSource,
-    pub flags: wgpu::ShaderFlags,
+    pub flags: crate::wgpu::ShaderFlags,
 }
 impl HaveDependencies for ShaderModuleDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -241,16 +241,16 @@ pub struct CommandEncoderDescriptor {
 #[derive(Debug, Clone, PartialEq)]
 pub struct RenderBundleEncoderDescriptor {
     pub label: String,
-    pub color_formats: Vec<wgpu::TextureFormat>,
-    pub depth_stencil_format: Option<wgpu::TextureFormat>,
+    pub color_formats: Vec<crate::wgpu::TextureFormat>,
+    pub depth_stencil_format: Option<crate::wgpu::TextureFormat>,
     pub sample_count: u32,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct BufferBinding {
-    pub buffer: BufferId, //Arc<wgpu::Buffer>
-    pub offset: wgpu::BufferAddress,
-    pub size: Option<wgpu::BufferSize>,
+    pub buffer: BufferId, //Arc<crate::wgpu::Buffer>
+    pub offset: crate::wgpu::BufferAddress,
+    pub size: Option<crate::wgpu::BufferSize>,
 }
 impl HaveDependencies for BufferBinding {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -262,9 +262,9 @@ impl HaveDependencies for BufferBinding {
 pub enum BindingResource {
     Buffer(BufferBinding),
     BufferArray(Vec<BufferBinding>),
-    Sampler(SamplerId),                   //Arc<wgpu::Sampler>
-    TextureView(TextureViewId),           //Arc<wgpu::TextureView>
-    TextureViewArray(Vec<TextureViewId>), //Arc<wgpu::TextureView>
+    Sampler(SamplerId),                   //Arc<crate::wgpu::Sampler>
+    TextureView(TextureViewId),           //Arc<crate::wgpu::TextureView>
+    TextureViewArray(Vec<TextureViewId>), //Arc<crate::wgpu::TextureView>
 }
 impl HaveDependencies for BindingResource {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -276,8 +276,8 @@ impl HaveDependencies for BindingResource {
                 .flatten()
                 .collect(),
             Self::Sampler(id) => vec![id.id_ref().clone()],
-            Self::TextureView(id) => vec![id.id_ref().clone()], //Arc<wgpu::TextureView>
-            Self::TextureViewArray(ids) => ids.iter().map(|id| id.id_ref().clone()).collect(), //Arc<wgpu::TextureView>
+            Self::TextureView(id) => vec![id.id_ref().clone()], //Arc<crate::wgpu::TextureView>
+            Self::TextureViewArray(ids) => ids.iter().map(|id| id.id_ref().clone()).collect(), //Arc<crate::wgpu::TextureView>
         }
     }
 }
@@ -297,7 +297,7 @@ impl HaveDependencies for BindGroupEntry {
 pub struct BindGroupDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub layout: BindGroupLayoutId, //Arc<wgpu::BindGroupLayout>
+    pub layout: BindGroupLayoutId, //Arc<crate::wgpu::BindGroupLayout>
     pub entries: Vec<BindGroupEntry>,
 }
 impl HaveDependencies for BindGroupDescriptor {
@@ -318,7 +318,7 @@ impl HaveDependencies for BindGroupDescriptor {
 pub struct BindGroupLayoutDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub entries: Vec<wgpu::BindGroupLayoutEntry>,
+    pub entries: Vec<crate::wgpu::BindGroupLayoutEntry>,
 }
 impl HaveDependencies for BindGroupLayoutDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -330,8 +330,8 @@ impl HaveDependencies for BindGroupLayoutDescriptor {
 pub struct PipelineLayoutDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub bind_group_layouts: Vec<BindGroupLayoutId>, //Arc<wgpu::BindGroupLayout>
-    pub push_constant_ranges: Vec<wgpu::PushConstantRange>,
+    pub bind_group_layouts: Vec<BindGroupLayoutId>, //Arc<crate::wgpu::BindGroupLayout>
+    pub push_constant_ranges: Vec<crate::wgpu::PushConstantRange>,
 }
 impl HaveDependencies for PipelineLayoutDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -343,14 +343,14 @@ impl HaveDependencies for PipelineLayoutDescriptor {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct VertexBufferLayout {
-    pub array_stride: wgpu::BufferAddress,
-    pub step_mode: wgpu::InputStepMode,
-    pub attributes: Vec<wgpu::VertexAttribute>,
+    pub array_stride: crate::wgpu::BufferAddress,
+    pub step_mode: crate::wgpu::InputStepMode,
+    pub attributes: Vec<crate::wgpu::VertexAttribute>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct VertexState {
-    pub module: ShaderModuleId, //Arc<wgpu::ShaderModule>
+    pub module: ShaderModuleId, //Arc<crate::wgpu::ShaderModule>
     pub entry_point: String,
     pub buffers: Vec<VertexBufferLayout>,
 }
@@ -377,8 +377,8 @@ impl HaveDependencies for ColorTarget {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ColorTargetState {
     pub target: ColorTarget,
-    pub blend: Option<wgpu::BlendState>,
-    pub write_mask: wgpu::ColorWrite,
+    pub blend: Option<crate::wgpu::BlendState>,
+    pub write_mask: crate::wgpu::ColorWrite,
 }
 impl HaveDependencies for ColorTargetState {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -388,9 +388,9 @@ impl HaveDependencies for ColorTargetState {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FragmentState {
-    pub module: ShaderModuleId, //Arc<wgpu::ShaderModule>
+    pub module: ShaderModuleId, //Arc<crate::wgpu::ShaderModule>
     pub entry_point: String,
-    pub targets: Vec<wgpu::ColorTargetState>,
+    pub targets: Vec<crate::wgpu::ColorTargetState>,
 }
 impl HaveDependencies for FragmentState {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -402,20 +402,20 @@ impl HaveDependencies for FragmentState {
 pub struct DepthStencilState {
     pub id: TextureViewId,
     pub depth_write_enabled: bool,
-    pub depth_compare: wgpu::CompareFunction,
-    pub stencil: wgpu::StencilState,
-    pub bias: wgpu::DepthBiasState,
+    pub depth_compare: crate::wgpu::CompareFunction,
+    pub stencil: crate::wgpu::StencilState,
+    pub bias: crate::wgpu::DepthBiasState,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RenderPipelineDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub layout: Option<PipelineLayoutId>, //Arc<wgpu::PipelineLayout>
+    pub layout: Option<PipelineLayoutId>, //Arc<crate::wgpu::PipelineLayout>
     pub vertex: VertexState,
-    pub primitive: wgpu::PrimitiveState,
+    pub primitive: crate::wgpu::PrimitiveState,
     pub depth_stencil: Option<DepthStencilState>,
-    pub multisample: wgpu::MultisampleState,
+    pub multisample: crate::wgpu::MultisampleState,
     pub fragment: Option<FragmentState>,
 }
 
@@ -438,8 +438,8 @@ impl HaveDependencies for RenderPipelineDescriptor {
 pub struct ComputePipelineDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub layout: Option<PipelineLayoutId>, //Arc<wgpu::PipelineLayout>
-    pub module: ShaderModuleId,           //Arc<wgpu::ShaderModule>
+    pub layout: Option<PipelineLayoutId>, //Arc<crate::wgpu::PipelineLayout>
+    pub module: ShaderModuleId,           //Arc<crate::wgpu::ShaderModule>
     pub entry_point: String,
 }
 impl HaveDependencies for ComputePipelineDescriptor {
@@ -455,18 +455,19 @@ impl HaveDependencies for ComputePipelineDescriptor {
 pub struct BufferDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub size: wgpu::BufferAddress,
-    pub usage: wgpu::BufferUsage,
+    pub size: crate::wgpu::BufferAddress,
+    pub usage: crate::wgpu::BufferUsage,
 }
 impl HaveDependencies for BufferDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
         vec![*self.device.id_ref()]
     }
 }
-use std::os::unix::io::RawFd;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum TextureSource {
-    DmaBuf(RawFd, Option<wgpu::DrmFormatImageProperties>),
+    #[cfg(feature="wgpu_emdd")]
+    DmaBuf(std::os::unix::io::RawFd, Option<crate::wgpu::DrmFormatImageProperties>),
     //Ptr(std::sync::Arc<std::ffi::c_void>),
     Local,
 }
@@ -476,10 +477,10 @@ pub struct TextureDescriptor {
     pub label: String,
     pub device: DeviceId,
     pub source: TextureSource,
-    pub usage: wgpu::TextureUsage,
-    pub size: wgpu::Extent3d,
-    pub format: wgpu::TextureFormat,
-    pub dimension: wgpu::TextureDimension,
+    pub usage: crate::wgpu::TextureUsage,
+    pub size: crate::wgpu::Extent3d,
+    pub format: crate::wgpu::TextureFormat,
+    pub dimension: crate::wgpu::TextureDimension,
     pub mip_level_count: u32,
     pub sample_count: u32,
 }
@@ -494,9 +495,9 @@ pub struct TextureViewDescriptor {
     pub label: String,
     pub device: DeviceId,
     pub texture: TextureId,
-    pub format: wgpu::TextureFormat,
-    pub dimension: wgpu::TextureViewDimension,
-    pub aspect: wgpu::TextureAspect,
+    pub format: crate::wgpu::TextureFormat,
+    pub dimension: crate::wgpu::TextureViewDimension,
+    pub aspect: crate::wgpu::TextureAspect,
     pub base_mip_level: u32,
     pub mip_level_count: Option<std::num::NonZeroU32>,
     pub base_array_layer: u32,
@@ -514,17 +515,17 @@ impl HaveDependencies for TextureViewDescriptor {
 pub struct SamplerDescriptor {
     pub label: String,
     pub device: DeviceId,
-    pub address_mode_u: wgpu::AddressMode,
-    pub address_mode_v: wgpu::AddressMode,
-    pub address_mode_w: wgpu::AddressMode,
-    pub mag_filter: wgpu::FilterMode,
-    pub min_filter: wgpu::FilterMode,
-    pub mipmap_filter: wgpu::FilterMode,
+    pub address_mode_u: crate::wgpu::AddressMode,
+    pub address_mode_v: crate::wgpu::AddressMode,
+    pub address_mode_w: crate::wgpu::AddressMode,
+    pub mag_filter: crate::wgpu::FilterMode,
+    pub min_filter: crate::wgpu::FilterMode,
+    pub mipmap_filter: crate::wgpu::FilterMode,
     pub lod_min_clamp: f32,
     pub lod_max_clamp: f32,
-    pub compare: Option<wgpu::CompareFunction>,
+    pub compare: Option<crate::wgpu::CompareFunction>,
     pub anisotropy_clamp: Option<std::num::NonZeroU8>,
-    pub border_color: Option<wgpu::SamplerBorderColor>,
+    pub border_color: Option<crate::wgpu::SamplerBorderColor>,
 }
 impl HaveDependencies for SamplerDescriptor {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -533,7 +534,7 @@ impl HaveDependencies for SamplerDescriptor {
 }
 
 pub use std::num::NonZeroU8;
-pub use wgpu::{
+pub use crate::wgpu::{
     AddressMode, BindGroupLayoutEntry, CompareFunction, ComputePass, FilterMode,
     QuerySetDescriptor, RenderPass, Sampler, SamplerBorderColor, SwapChainDescriptor,
 };
@@ -665,7 +666,7 @@ impl HaveDependencies for ColorView {
 pub struct RenderPassColorAttachment {
     pub view: ColorView,
     pub resolve_target: Option<TextureViewId>,
-    pub ops: wgpu::Operations<wgpu::Color>,
+    pub ops: crate::wgpu::Operations<crate::wgpu::Color>,
 }
 impl RenderPassColorAttachment {
     pub fn swapchains(&self) -> Vec<SwapchainId> {
@@ -758,24 +759,24 @@ pub enum RenderCommand {
         pipeline: RenderPipelineId,
     },
     SetPushConstants {
-        stages: wgpu::ShaderStage,
+        stages: crate::wgpu::ShaderStage,
         offset: u32,
         data: Vec<u8>,
     },
     SetBindGroup {
         index: u32,
         bind_group: BindGroupId,
-        offsets: Vec<wgpu::DynamicOffset>,
+        offsets: Vec<crate::wgpu::DynamicOffset>,
     },
     SetVertexBuffer {
         slot: u32,
         buffer: BufferId,
-        slice: Slice<wgpu::BufferAddress>,
+        slice: Slice<crate::wgpu::BufferAddress>,
     },
     SetIndexBuffer {
-        index_format: wgpu::IndexFormat,
+        index_format: crate::wgpu::IndexFormat,
         buffer: BufferId,
-        slice: Slice<wgpu::BufferAddress>,
+        slice: Slice<crate::wgpu::BufferAddress>,
     },
     Draw {
         vertices: Range<u32>,
@@ -804,10 +805,10 @@ impl HaveDependencies for RenderCommand {
 #[derive(Debug, Clone, PartialEq)]
 pub struct BufferToBufferCopy {
     pub src_buffer: BufferId,
-    pub src_offset: wgpu::BufferAddress,
+    pub src_offset: crate::wgpu::BufferAddress,
     pub dst_buffer: BufferId,
-    pub dst_offset: wgpu::BufferAddress,
-    pub size: wgpu::BufferAddress,
+    pub dst_offset: crate::wgpu::BufferAddress,
+    pub size: crate::wgpu::BufferAddress,
 }
 impl HaveDependencies for BufferToBufferCopy {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -818,14 +819,27 @@ impl HaveDependencies for BufferToBufferCopy {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct BufferToTextureCopy {
     pub src_buffer: BufferId,
-    pub src_layout: wgpu::ImageDataLayout,
+    pub src_layout: crate::wgpu::ImageDataLayout,
     pub dst_texture: TextureId,
     pub dst_mip_level: u32,
-    pub dst_origin: wgpu::Origin3d,
-    pub copy_size: wgpu::Extent3d,
+    pub dst_origin: crate::wgpu::Origin3d,
+    pub copy_size: crate::wgpu::Extent3d,
+}
+impl PartialEq for BufferToTextureCopy {
+    fn eq(&self, other: &Self) -> bool {
+        if self.src_buffer != other.src_buffer {return false;}
+        if self.src_layout.offset != other.src_layout.offset {return false;}
+        if self.src_layout.bytes_per_row != other.src_layout.bytes_per_row {return false;}
+        if self.src_layout.rows_per_image != other.src_layout.rows_per_image {return false;}
+        if self.dst_texture != other.dst_texture {return false;}
+        if self.dst_mip_level != other.dst_mip_level {return false;}
+        if self.dst_origin != other.dst_origin {return false;}
+        if self.copy_size != other.copy_size {return false;}
+        true
+    }
 }
 impl HaveDependencies for BufferToTextureCopy {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -836,14 +850,27 @@ impl HaveDependencies for BufferToTextureCopy {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct TextureToBufferCopy {
     pub src_texture: TextureId,
     pub src_mip_level: u32,
-    pub src_origin: wgpu::Origin3d,
+    pub src_origin: crate::wgpu::Origin3d,
     pub dst_buffer: BufferId,
-    pub dst_layout: wgpu::ImageDataLayout,
-    pub copy_size: wgpu::Extent3d,
+    pub dst_layout: crate::wgpu::ImageDataLayout,
+    pub copy_size: crate::wgpu::Extent3d,
+}
+impl PartialEq for TextureToBufferCopy {
+    fn eq(&self, other: &Self) -> bool {
+        if self.src_texture != other.src_texture {return false;}
+        if self.src_mip_level != other.src_mip_level {return false;}
+        if self.src_origin != other.src_origin {return false;}
+        if self.dst_buffer != other.dst_buffer {return false;}
+        if self.dst_layout.offset != other.dst_layout.offset {return false;}
+        if self.dst_layout.bytes_per_row != other.dst_layout.bytes_per_row {return false;}
+        if self.dst_layout.rows_per_image != other.dst_layout.rows_per_image {return false;}
+        if self.copy_size != other.copy_size {return false;}
+        true
+    }
 }
 impl HaveDependencies for TextureToBufferCopy {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -858,11 +885,11 @@ impl HaveDependencies for TextureToBufferCopy {
 pub struct TextureToTextureCopy {
     pub src_texture: TextureId,
     pub src_mip_level: u32,
-    pub src_origin: wgpu::Origin3d,
+    pub src_origin: crate::wgpu::Origin3d,
     pub dst_texture: TextureId,
     pub dst_mip_level: u32,
-    pub dst_origin: wgpu::Origin3d,
-    pub copy_size: wgpu::Extent3d,
+    pub dst_origin: crate::wgpu::Origin3d,
+    pub copy_size: crate::wgpu::Extent3d,
 }
 impl HaveDependencies for TextureToTextureCopy {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -876,18 +903,31 @@ impl HaveDependencies for TextureToTextureCopy {
 #[derive(Debug, Clone, PartialEq)]
 pub struct BufferWrite {
     pub buffer: BufferId,
-    pub offset: wgpu::BufferAddress,
+    pub offset: crate::wgpu::BufferAddress,
     pub data: Vec<u8>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct TextureWrite {
     pub texture: TextureId,
     pub mip_level: u32,
-    pub origin: wgpu::Origin3d,
+    pub origin: crate::wgpu::Origin3d,
     pub data: Vec<u8>,
-    pub layout: wgpu::ImageDataLayout,
-    pub size: wgpu::Extent3d,
+    pub layout: crate::wgpu::ImageDataLayout,
+    pub size: crate::wgpu::Extent3d,
+}
+impl PartialEq for TextureWrite {
+    fn eq(&self, other: &Self) -> bool {
+        if self.texture != other.texture {return false;}
+        if self.mip_level != other.mip_level {return false;}
+        if self.origin != other.origin {return false;}
+        if self.data != other.data {return false;}
+        if self.layout.offset != other.layout.offset {return false;}
+        if self.layout.bytes_per_row != other.layout.bytes_per_row {return false;}
+        if self.layout.rows_per_image != other.layout.rows_per_image {return false;}
+        if self.size != other.size {return false;}
+        true
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -912,14 +952,14 @@ impl ResourceWrite {
             }
         }
     }
-    pub fn record(&self, resources: &ResourceManager, queue: &wgpu::Queue) {
+    pub fn record(&self, resources: &ResourceManager, queue: &crate::wgpu::Queue) {
         match self {
             Self::Buffer(write) => {
                 let buffer = resources.buffer_handle_ref(&write.buffer).unwrap();
                 queue.write_buffer(buffer, write.offset, write.data.as_slice());
             }
             Self::Texture(write) => {
-                let wgpu_dst = wgpu::ImageCopyTexture {
+                let wgpu_dst = crate::wgpu::ImageCopyTexture {
                     texture: resources.texture_handle_ref(&write.texture).unwrap(),
                     mip_level: write.mip_level,
                     origin: write.origin,

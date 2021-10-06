@@ -11,8 +11,8 @@ use pal::definitions::*;
 
 pub fn quick_run<T: TaskTrait,C: Fn(TaskId, &tokio::runtime::Handle, &mut UpdateContext) -> T>(
     surface_count: usize,
-    features: wgpu::Features,
-    limits: wgpu::Limits,
+    features: crate::wgpu::Features,
+    limits: crate::wgpu::Limits,
     task_callback: C
 ) {
     let mut wgpu_engine =

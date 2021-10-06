@@ -8,7 +8,7 @@ impl WGpuEngine {
         &mut self,
         external_id: usize,
         label: String,
-        surface: Arc<wgpu::Surface>,
+        surface: Arc<crate::wgpu::Surface>,
         width: u32,
         height: u32,
     ) {

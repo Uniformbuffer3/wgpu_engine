@@ -158,7 +158,7 @@ impl ResourceBuilder {
 pub struct InstanceBuilder {
     pub id: InstanceId,
     pub label: String,
-    pub backend: wgpu::BackendBit,
+    pub backend: crate::wgpu::BackendBit,
 }
 impl InstanceBuilder {
     pub fn new(
@@ -172,7 +172,7 @@ impl InstanceBuilder {
     }
     pub fn build(&self) -> InstanceHandle {
         log::info!(target: "EntityManager","Building {}",self.id);
-        Arc::new(wgpu::Instance::new(self.backend))
+        Arc::new(crate::wgpu::Instance::new(self.backend))
     }
 }
 
@@ -181,10 +181,10 @@ pub struct DeviceBuilder {
     pub id: DeviceId,
     pub label: String,
     pub instance: InstanceHandle,
-    pub backend: wgpu::BackendBit,
+    pub backend: crate::wgpu::BackendBit,
     pub pci_id: usize,
-    pub features: wgpu::Features,
-    pub limits: wgpu::Limits,
+    pub features: crate::wgpu::Features,
+    pub limits: crate::wgpu::Limits,
 }
 impl DeviceBuilder {
     pub fn new(
@@ -223,7 +223,7 @@ impl DeviceBuilder {
             .find(|adapter| adapter.get_info().device == self.pci_id)
             .unwrap();
 
-        let descriptor = wgpu::DeviceDescriptor {
+        let descriptor = crate::wgpu::DeviceDescriptor {
             label: Some(self.label.as_str()),
             features: self.features,
             limits: self.limits.clone(),
@@ -242,7 +242,7 @@ pub struct SwapchainBuilder {
     pub id: SwapchainId,
     pub label: String,
     pub device: DeviceHandle,
-    pub surface: Arc<wgpu::Surface>,
+    pub surface: Arc<crate::wgpu::Surface>,
     pub width: u32,
     pub height: u32,
 }
@@ -285,8 +285,8 @@ pub struct BufferBuilder {
     pub id: BufferId,
     pub device: DeviceHandle,
     pub label: String,
-    pub size: wgpu::BufferAddress,
-    pub usage: wgpu::BufferUsage,
+    pub size: crate::wgpu::BufferAddress,
+    pub usage: crate::wgpu::BufferUsage,
 }
 impl BufferBuilder {
     pub fn new(
@@ -315,7 +315,7 @@ impl BufferBuilder {
         })
     }
     pub fn build(&self) -> BufferHandle {
-        let descriptor = wgpu::BufferDescriptor {
+        let descriptor = crate::wgpu::BufferDescriptor {
             label: Some(self.label.as_str()),
             size: self.size,
             usage: self.usage,
@@ -332,12 +332,12 @@ pub struct TextureBuilder {
     pub device: DeviceHandle,
     pub label: String,
     pub source: TextureSource,
-    pub size: wgpu::Extent3d,
+    pub size: crate::wgpu::Extent3d,
     pub mip_level_count: u32,
     pub sample_count: u32,
-    pub dimension: wgpu::TextureDimension,
-    pub format: wgpu::TextureFormat,
-    pub usage: wgpu::TextureUsage,
+    pub dimension: crate::wgpu::TextureDimension,
+    pub format: crate::wgpu::TextureFormat,
+    pub usage: crate::wgpu::TextureUsage,
 }
 impl TextureBuilder {
     pub fn new(
@@ -376,7 +376,7 @@ impl TextureBuilder {
         })
     }
     pub fn build(&self) -> TextureHandle {
-        let descriptor = wgpu::TextureDescriptor {
+        let descriptor = crate::wgpu::TextureDescriptor {
             label: Some(self.label.as_str()),
             size: self.size,
             mip_level_count: self.mip_level_count,
@@ -394,9 +394,9 @@ impl TextureBuilder {
 pub struct TextureViewBuilder {
     pub label: String,
     pub texture: TextureHandle,
-    pub format: wgpu::TextureFormat,
-    pub dimension: wgpu::TextureViewDimension,
-    pub aspect: wgpu::TextureAspect,
+    pub format: crate::wgpu::TextureFormat,
+    pub dimension: crate::wgpu::TextureViewDimension,
+    pub aspect: crate::wgpu::TextureAspect,
     pub base_mip_level: u32,
     pub mip_level_count: Option<std::num::NonZeroU32>,
     pub base_array_layer: u32,
@@ -439,7 +439,7 @@ impl TextureViewBuilder {
     }
 
     pub fn build(&self) -> TextureViewHandle {
-        let descriptor = wgpu::TextureViewDescriptor {
+        let descriptor = crate::wgpu::TextureViewDescriptor {
             label: Some(self.label.as_str()),
             format: Some(self.format),
             dimension: Some(self.dimension),
@@ -458,17 +458,17 @@ pub struct SamplerBuilder {
     pub id: SamplerId,
     pub device: DeviceHandle,
     pub label: String,
-    pub address_mode_u: wgpu::AddressMode,
-    pub address_mode_v: wgpu::AddressMode,
-    pub address_mode_w: wgpu::AddressMode,
-    pub mag_filter: wgpu::FilterMode,
-    pub min_filter: wgpu::FilterMode,
-    pub mipmap_filter: wgpu::FilterMode,
+    pub address_mode_u: crate::wgpu::AddressMode,
+    pub address_mode_v: crate::wgpu::AddressMode,
+    pub address_mode_w: crate::wgpu::AddressMode,
+    pub mag_filter: crate::wgpu::FilterMode,
+    pub min_filter: crate::wgpu::FilterMode,
+    pub mipmap_filter: crate::wgpu::FilterMode,
     pub lod_min_clamp: f32,
     pub lod_max_clamp: f32,
-    pub compare: Option<wgpu::CompareFunction>,
+    pub compare: Option<crate::wgpu::CompareFunction>,
     pub anisotropy_clamp: Option<std::num::NonZeroU8>,
-    pub border_color: Option<wgpu::SamplerBorderColor>,
+    pub border_color: Option<crate::wgpu::SamplerBorderColor>,
 }
 impl SamplerBuilder {
     pub fn new(
@@ -514,7 +514,7 @@ impl SamplerBuilder {
         })
     }
     pub fn build(&self) -> SamplerHandle {
-        let descriptor = wgpu::SamplerDescriptor {
+        let descriptor = crate::wgpu::SamplerDescriptor {
             label: Some(self.label.as_str()),
             address_mode_u: self.address_mode_u,
             address_mode_v: self.address_mode_v,
@@ -539,7 +539,7 @@ pub struct ShaderModuleBuilder {
     pub device: DeviceHandle,
     pub label: String,
     pub source: ShaderSource,
-    pub flags: wgpu::ShaderFlags,
+    pub flags: crate::wgpu::ShaderFlags,
 }
 impl ShaderModuleBuilder {
     pub fn new(
@@ -567,13 +567,13 @@ impl ShaderModuleBuilder {
         })
     }
     pub fn build(&self) -> ShaderModuleHandle {
-        let descriptor = wgpu::ShaderModuleDescriptor {
+        let descriptor = crate::wgpu::ShaderModuleDescriptor {
             label: Some(self.label.as_str()),
             source: match self.source {
                 ShaderSource::SpirV(ref spirv) => {
-                    wgpu::ShaderSource::SpirV(Borrowed(spirv.as_slice()))
+                    crate::wgpu::ShaderSource::SpirV(Borrowed(spirv.as_slice()))
                 }
-                ShaderSource::Wgsl(ref wgsl) => wgpu::ShaderSource::Wgsl(Borrowed(wgsl.as_str())),
+                ShaderSource::Wgsl(ref wgsl) => crate::wgpu::ShaderSource::Wgsl(Borrowed(wgsl.as_str())),
             },
             flags: self.flags,
         };
@@ -587,7 +587,7 @@ pub struct BindGroupLayoutBuilder {
     pub id: BindGroupLayoutId,
     pub device: DeviceHandle,
     pub label: String,
-    pub entries: Vec<wgpu::BindGroupLayoutEntry>,
+    pub entries: Vec<crate::wgpu::BindGroupLayoutEntry>,
 }
 impl BindGroupLayoutBuilder {
     pub fn new(
@@ -613,7 +613,7 @@ impl BindGroupLayoutBuilder {
         })
     }
     pub fn build(&self) -> BindGroupLayoutHandle {
-        let descriptor = wgpu::BindGroupLayoutDescriptor {
+        let descriptor = crate::wgpu::BindGroupLayoutDescriptor {
             label: Some(self.label.as_str()),
             entries: self.entries.as_slice(),
         };
@@ -625,8 +625,8 @@ impl BindGroupLayoutBuilder {
 #[derive(Debug, Clone)]
 pub struct BufferBindingBuilder {
     pub buffer: BufferHandle,
-    pub offset: wgpu::BufferAddress,
-    pub size: Option<wgpu::BufferSize>,
+    pub offset: crate::wgpu::BufferAddress,
+    pub size: Option<crate::wgpu::BufferSize>,
 }
 impl BufferBindingBuilder {
     pub fn new(
@@ -649,8 +649,8 @@ impl BufferBindingBuilder {
             size,
         })
     }
-    pub fn build(&self) -> wgpu::BufferBinding {
-        wgpu::BufferBinding {
+    pub fn build(&self) -> crate::wgpu::BufferBinding {
+        crate::wgpu::BufferBinding {
             buffer: &self.buffer,
             offset: self.offset,
             size: self.size,
@@ -741,26 +741,26 @@ impl BindingResourceBuilder {
 
     pub fn build<'a>(
         &'a self,
-        support1: &'a mut Vec<wgpu::BufferBinding<'a>>,
-        support2: &'a mut Vec<&'a wgpu::TextureView>,
-    ) -> wgpu::BindingResource<'a> {
+        support1: &'a mut Vec<crate::wgpu::BufferBinding<'a>>,
+        support2: &'a mut Vec<&'a crate::wgpu::TextureView>,
+    ) -> crate::wgpu::BindingResource<'a> {
         match self {
-            Self::Buffer(buffer_binding) => wgpu::BindingResource::Buffer(buffer_binding.build()),
+            Self::Buffer(buffer_binding) => crate::wgpu::BindingResource::Buffer(buffer_binding.build()),
             Self::BufferArray(buffer_bindings) => {
                 buffer_bindings
                     .iter()
                     .for_each(|buffer_binding| support1.push(buffer_binding.build()));
-                wgpu::BindingResource::BufferArray(support1.as_slice())
+                crate::wgpu::BindingResource::BufferArray(support1.as_slice())
             }
-            Self::Sampler(sampler) => wgpu::BindingResource::Sampler(sampler.as_ref()),
+            Self::Sampler(sampler) => crate::wgpu::BindingResource::Sampler(sampler.as_ref()),
             Self::TextureView(texture_view) => {
-                wgpu::BindingResource::TextureView(texture_view.as_ref())
+                crate::wgpu::BindingResource::TextureView(texture_view.as_ref())
             }
             Self::TextureViewArray(texture_views) => {
                 texture_views
                     .iter()
                     .for_each(|texture_view| support2.push(texture_view.as_ref()));
-                wgpu::BindingResource::TextureViewArray(support2.as_slice())
+                crate::wgpu::BindingResource::TextureViewArray(support2.as_slice())
             }
         }
     }
@@ -789,10 +789,10 @@ impl BindGroupEntryBuilder {
     }
     pub fn build<'a>(
         &'a self,
-        support1: &'a mut Vec<wgpu::BufferBinding<'a>>,
-        support2: &'a mut Vec<&'a wgpu::TextureView>,
-    ) -> wgpu::BindGroupEntry<'a> {
-        let descriptor = wgpu::BindGroupEntry {
+        support1: &'a mut Vec<crate::wgpu::BufferBinding<'a>>,
+        support2: &'a mut Vec<&'a crate::wgpu::TextureView>,
+    ) -> crate::wgpu::BindGroupEntry<'a> {
+        let descriptor = crate::wgpu::BindGroupEntry {
             binding: self.binding,
             resource: self.resource.build(support1, support2),
         };
@@ -851,8 +851,8 @@ impl BindGroupBuilder {
         })
     }
     pub fn build(&self) -> BindGroupHandle {
-        let mut supports1: Vec<Vec<wgpu::BufferBinding>> = Vec::new();
-        let mut supports2: Vec<Vec<&wgpu::TextureView>> = Vec::new();
+        let mut supports1: Vec<Vec<crate::wgpu::BufferBinding>> = Vec::new();
+        let mut supports2: Vec<Vec<&crate::wgpu::TextureView>> = Vec::new();
         self.entries.iter().for_each(|_| {
             supports1.push(Vec::new());
             supports2.push(Vec::new());
@@ -868,7 +868,7 @@ impl BindGroupBuilder {
                 entries.push(bind_group_entity.build(support1, support2));
             });
 
-        let descriptor = wgpu::BindGroupDescriptor {
+        let descriptor = crate::wgpu::BindGroupDescriptor {
             label: Some(self.label.as_str()),
             layout: self.layout.as_ref(),
             entries: entries.as_slice(),
@@ -884,7 +884,7 @@ pub struct PipelineLayoutBuilder {
     pub device: DeviceHandle,
     pub label: String,
     pub bind_group_layouts: Vec<BindGroupLayoutHandle>,
-    pub push_constant_ranges: Vec<wgpu::PushConstantRange>,
+    pub push_constant_ranges: Vec<crate::wgpu::PushConstantRange>,
 }
 impl PipelineLayoutBuilder {
     pub fn new(
@@ -922,12 +922,12 @@ impl PipelineLayoutBuilder {
         })
     }
     pub fn build(&self) -> PipelineLayoutHandle {
-        let bind_group_layouts: Vec<&wgpu::BindGroupLayout> = self
+        let bind_group_layouts: Vec<&crate::wgpu::BindGroupLayout> = self
             .bind_group_layouts
             .iter()
             .map(|bind_group_layout| bind_group_layout.as_ref())
             .collect();
-        let descriptor = wgpu::PipelineLayoutDescriptor {
+        let descriptor = crate::wgpu::PipelineLayoutDescriptor {
             label: Some(self.label.as_str()),
             bind_group_layouts: bind_group_layouts.as_slice(),
             push_constant_ranges: self.push_constant_ranges.as_slice(),
@@ -939,9 +939,9 @@ impl PipelineLayoutBuilder {
 
 #[derive(Debug, Clone)]
 pub struct VertexBufferLayoutBuilder {
-    pub array_stride: wgpu::BufferAddress,
-    pub step_mode: wgpu::InputStepMode,
-    pub attributes: Vec<wgpu::VertexAttribute>,
+    pub array_stride: crate::wgpu::BufferAddress,
+    pub step_mode: crate::wgpu::InputStepMode,
+    pub attributes: Vec<crate::wgpu::VertexAttribute>,
 }
 impl VertexBufferLayoutBuilder {
     pub fn new(descriptor: &VertexBufferLayout) -> Self {
@@ -955,8 +955,8 @@ impl VertexBufferLayoutBuilder {
             attributes,
         }
     }
-    pub fn build(&self) -> wgpu::VertexBufferLayout {
-        wgpu::VertexBufferLayout {
+    pub fn build(&self) -> crate::wgpu::VertexBufferLayout {
+        crate::wgpu::VertexBufferLayout {
             array_stride: self.array_stride,
             step_mode: self.step_mode,
             attributes: self.attributes.as_slice(),
@@ -998,13 +998,13 @@ impl VertexStateBuilder {
     }
     pub fn build<'a>(
         &'a self,
-        support: &'a mut Vec<wgpu::VertexBufferLayout<'a>>,
-    ) -> wgpu::VertexState<'a> {
+        support: &'a mut Vec<crate::wgpu::VertexBufferLayout<'a>>,
+    ) -> crate::wgpu::VertexState<'a> {
         self.buffers
             .iter()
             .for_each(|vertex_buffer_layout| support.push(vertex_buffer_layout.build()));
 
-        wgpu::VertexState {
+        crate::wgpu::VertexState {
             module: self.module.as_ref(),
             entry_point: self.entry_point.as_str(),
             buffers: support.as_slice(),
@@ -1016,7 +1016,7 @@ impl VertexStateBuilder {
 pub struct FragmentStateBuilder {
     pub module: ShaderModuleHandle,
     pub entry_point: String,
-    pub targets: Vec<wgpu::ColorTargetState>,
+    pub targets: Vec<crate::wgpu::ColorTargetState>,
 }
 impl FragmentStateBuilder {
     pub fn new(
@@ -1041,8 +1041,8 @@ impl FragmentStateBuilder {
             targets,
         })
     }
-    pub fn build(&self) -> wgpu::FragmentState {
-        wgpu::FragmentState {
+    pub fn build(&self) -> crate::wgpu::FragmentState {
+        crate::wgpu::FragmentState {
             module: self.module.as_ref(),
             entry_point: self.entry_point.as_str(),
             targets: self.targets.as_slice(),
@@ -1057,9 +1057,9 @@ pub struct RenderPipelineBuilder {
     pub label: String,
     pub layout: Option<PipelineLayoutHandle>,
     pub vertex: VertexStateBuilder,
-    pub primitive: wgpu::PrimitiveState,
-    pub depth_stencil: Option<wgpu::DepthStencilState>,
-    pub multisample: wgpu::MultisampleState,
+    pub primitive: crate::wgpu::PrimitiveState,
+    pub depth_stencil: Option<crate::wgpu::DepthStencilState>,
+    pub multisample: crate::wgpu::MultisampleState,
     pub fragment: Option<FragmentStateBuilder>,
 }
 
@@ -1107,7 +1107,7 @@ impl RenderPipelineBuilder {
                     }
                 };
 
-                Some(wgpu::DepthStencilState {
+                Some(crate::wgpu::DepthStencilState {
                     format: depth_stencil.format,
                     depth_write_enabled: depth_stencil_state.depth_write_enabled,
                     depth_compare: depth_stencil_state.depth_compare,
@@ -1118,23 +1118,23 @@ impl RenderPipelineBuilder {
             None => None,
         };
         /*
-                        Some(wgpu::DepthStencilState {
+                        Some(crate::wgpu::DepthStencilState {
                             format: depth_stencil.format,
                             depth_write_enabled: false,
-                            depth_compare: wgpu::CompareFunction::LessEqual,
-                            stencil: wgpu::StencilState::default(),
-                            bias: wgpu::DepthBiasState::default(),
+                            depth_compare: crate::wgpu::CompareFunction::LessEqual,
+                            stencil: crate::wgpu::StencilState::default(),
+                            bias: crate::wgpu::DepthBiasState::default(),
                         })
         */
 
         /*
-        let mut surface_color_target: wgpu::ColorTargetState = swapchain.format().into();
-        surface_color_target.blend = Some(wgpu::BlendState {
-            color: wgpu::BlendComponent::OVER,
-            alpha: wgpu::BlendComponent {
-                src_factor: wgpu::BlendFactor::One,
-                dst_factor: wgpu::BlendFactor::Zero,
-                operation: wgpu::BlendOperation::Add,
+        let mut surface_color_target: crate::wgpu::ColorTargetState = swapchain.format().into();
+        surface_color_target.blend = Some(crate::wgpu::BlendState {
+            color: crate::wgpu::BlendComponent::OVER,
+            alpha: crate::wgpu::BlendComponent {
+                src_factor: crate::wgpu::BlendFactor::One,
+                dst_factor: crate::wgpu::BlendFactor::Zero,
+                operation: crate::wgpu::BlendOperation::Add,
             },
         });*/
 
@@ -1169,7 +1169,7 @@ impl RenderPipelineBuilder {
     }
     pub fn build(&self) -> RenderPipelineHandle {
         let mut support = Vec::new();
-        let descriptor = wgpu::RenderPipelineDescriptor {
+        let descriptor = crate::wgpu::RenderPipelineDescriptor {
             label: Some(self.label.as_str()),
             layout: self
                 .layout
@@ -1245,7 +1245,7 @@ impl ComputePipelineBuilder {
         })
     }
     pub fn build(&self) -> ComputePipelineHandle {
-        let descriptor = wgpu::ComputePipelineDescriptor {
+        let descriptor = crate::wgpu::ComputePipelineDescriptor {
             label: Some(self.label.as_str()),
             layout: self
                 .layout
@@ -1268,7 +1268,7 @@ impl ComputeCommandBuilder {
     ) -> Result<Self, ResourceBuilderError> {
         panic!()
     }
-    pub fn build<'a>(&'a self, _encoder: &mut wgpu::ComputePass<'a>) -> bool {
+    pub fn build<'a>(&'a self, _encoder: &mut crate::wgpu::ComputePass<'a>) -> bool {
         panic!()
     }
 }
@@ -1279,24 +1279,24 @@ pub enum RenderCommandBuilder {
         pipeline: RenderPipelineHandle,
     },
     SetPushConstants {
-        stages: wgpu::ShaderStage,
+        stages: crate::wgpu::ShaderStage,
         offset: u32,
         data: Vec<u8>,
     },
     SetBindGroup {
         index: u32,
         bind_group: BindGroupHandle,
-        offsets: Vec<wgpu::DynamicOffset>,
+        offsets: Vec<crate::wgpu::DynamicOffset>,
     },
     SetVertexBuffer {
         slot: u32,
         buffer: BufferHandle,
-        slice: Slice<wgpu::BufferAddress>,
+        slice: Slice<crate::wgpu::BufferAddress>,
     },
     SetIndexBuffer {
-        index_format: wgpu::IndexFormat,
+        index_format: crate::wgpu::IndexFormat,
         buffer: BufferHandle,
-        slice: Slice<wgpu::BufferAddress>,
+        slice: Slice<crate::wgpu::BufferAddress>,
     },
     Draw {
         vertices: Range<u32>,
@@ -1425,7 +1425,7 @@ impl RenderCommandBuilder {
             }
         })
     }
-    pub fn build<'a>(&'a self, encoder: &mut wgpu::RenderPass<'a>) -> bool {
+    pub fn build<'a>(&'a self, encoder: &mut crate::wgpu::RenderPass<'a>) -> bool {
         match self {
             Self::SetPipeline { pipeline } => encoder.set_pipeline(pipeline),
             Self::SetPushConstants {
@@ -1466,10 +1466,10 @@ impl RenderCommandBuilder {
 pub struct TextureToBufferCopyBuilder {
     pub src_texture: TextureHandle,
     pub src_mip_level: u32,
-    pub src_origin: wgpu::Origin3d,
+    pub src_origin: crate::wgpu::Origin3d,
     pub dst_buffer: BufferHandle,
-    pub dst_layout: wgpu::ImageDataLayout,
-    pub copy_size: wgpu::Extent3d,
+    pub dst_layout: crate::wgpu::ImageDataLayout,
+    pub copy_size: crate::wgpu::Extent3d,
 }
 impl TextureToBufferCopyBuilder {
     pub fn new(
@@ -1506,13 +1506,13 @@ impl TextureToBufferCopyBuilder {
             copy_size,
         })
     }
-    pub fn build(&self, encoder: &mut wgpu::CommandEncoder) -> bool {
-        let wgpu_src = wgpu::ImageCopyTexture {
+    pub fn build(&self, encoder: &mut crate::wgpu::CommandEncoder) -> bool {
+        let wgpu_src = crate::wgpu::ImageCopyTexture {
             texture: self.src_texture.as_ref(),
             mip_level: self.src_mip_level,
             origin: self.src_origin,
         };
-        let wgpu_dst = wgpu::ImageCopyBuffer {
+        let wgpu_dst = crate::wgpu::ImageCopyBuffer {
             buffer: self.dst_buffer.as_ref(),
             layout: self.dst_layout,
         };
@@ -1525,11 +1525,11 @@ impl TextureToBufferCopyBuilder {
 pub struct TextureToTextureCopyBuilder {
     pub src_texture: TextureHandle,
     pub src_mip_level: u32,
-    pub src_origin: wgpu::Origin3d,
+    pub src_origin: crate::wgpu::Origin3d,
     pub dst_texture: TextureHandle,
     pub dst_mip_level: u32,
-    pub dst_origin: wgpu::Origin3d,
-    pub copy_size: wgpu::Extent3d,
+    pub dst_origin: crate::wgpu::Origin3d,
+    pub copy_size: crate::wgpu::Extent3d,
 }
 impl TextureToTextureCopyBuilder {
     pub fn new(
@@ -1568,13 +1568,13 @@ impl TextureToTextureCopyBuilder {
             copy_size,
         })
     }
-    pub fn build(&self, encoder: &mut wgpu::CommandEncoder) -> bool {
-        let wgpu_src = wgpu::ImageCopyTexture {
+    pub fn build(&self, encoder: &mut crate::wgpu::CommandEncoder) -> bool {
+        let wgpu_src = crate::wgpu::ImageCopyTexture {
             texture: self.src_texture.as_ref(),
             mip_level: self.src_mip_level,
             origin: self.src_origin,
         };
-        let wgpu_dst = wgpu::ImageCopyTexture {
+        let wgpu_dst = crate::wgpu::ImageCopyTexture {
             texture: self.dst_texture.as_ref(),
             mip_level: self.dst_mip_level,
             origin: self.dst_origin,
@@ -1587,11 +1587,11 @@ impl TextureToTextureCopyBuilder {
 #[derive(Debug, Clone)]
 pub struct BufferToTextureCopyBuilder {
     pub src_buffer: BufferHandle,
-    pub src_layout: wgpu::ImageDataLayout,
+    pub src_layout: crate::wgpu::ImageDataLayout,
     pub dst_texture: TextureHandle,
     pub dst_mip_level: u32,
-    pub dst_origin: wgpu::Origin3d,
-    pub copy_size: wgpu::Extent3d,
+    pub dst_origin: crate::wgpu::Origin3d,
+    pub copy_size: crate::wgpu::Extent3d,
 }
 impl BufferToTextureCopyBuilder {
     pub fn new(
@@ -1628,12 +1628,12 @@ impl BufferToTextureCopyBuilder {
             copy_size,
         })
     }
-    pub fn build(&self, encoder: &mut wgpu::CommandEncoder) -> bool {
-        let wgpu_src = wgpu::ImageCopyBuffer {
+    pub fn build(&self, encoder: &mut crate::wgpu::CommandEncoder) -> bool {
+        let wgpu_src = crate::wgpu::ImageCopyBuffer {
             buffer: self.src_buffer.as_ref(),
             layout: self.src_layout,
         };
-        let wgpu_dst = wgpu::ImageCopyTexture {
+        let wgpu_dst = crate::wgpu::ImageCopyTexture {
             texture: self.dst_texture.as_ref(),
             mip_level: self.dst_mip_level,
             origin: self.dst_origin,
@@ -1646,10 +1646,10 @@ impl BufferToTextureCopyBuilder {
 #[derive(Debug, Clone)]
 pub struct BufferToBufferCopyBuilder {
     pub src_buffer: BufferHandle,
-    pub src_offset: wgpu::BufferAddress,
+    pub src_offset: crate::wgpu::BufferAddress,
     pub dst_buffer: BufferHandle,
-    pub dst_offset: wgpu::BufferAddress,
-    pub size: wgpu::BufferAddress,
+    pub dst_offset: crate::wgpu::BufferAddress,
+    pub size: crate::wgpu::BufferAddress,
 }
 impl BufferToBufferCopyBuilder {
     pub fn new(
@@ -1684,7 +1684,7 @@ impl BufferToBufferCopyBuilder {
             size,
         })
     }
-    pub fn build(&self, encoder: &mut wgpu::CommandEncoder) -> bool {
+    pub fn build(&self, encoder: &mut crate::wgpu::CommandEncoder) -> bool {
         encoder.copy_buffer_to_buffer(
             self.src_buffer.as_ref(),
             self.src_offset,
@@ -1732,7 +1732,7 @@ impl ColorViewBuilder {
 pub struct RenderPassColorAttachmentBuilder {
     pub view: ColorViewBuilder,
     pub resolve_target: Option<TextureViewHandle>,
-    pub ops: wgpu::Operations<wgpu::Color>,
+    pub ops: crate::wgpu::Operations<crate::wgpu::Color>,
 }
 impl RenderPassColorAttachmentBuilder {
     pub fn new(
@@ -1764,8 +1764,8 @@ impl RenderPassColorAttachmentBuilder {
     }
     pub fn build<'a>(
         &'a self,
-        support: &'a mut Option<MutexGuard<'a, Option<wgpu::SwapChainFrame>>>,
-    ) -> wgpu::RenderPassColorAttachment<'a> {
+        support: &'a mut Option<MutexGuard<'a, Option<crate::wgpu::SwapChainFrame>>>,
+    ) -> crate::wgpu::RenderPassColorAttachment<'a> {
         let view = match &self.view {
             ColorViewBuilder::TextureView(view) => view.as_ref(),
             ColorViewBuilder::Swapchain(swapchain) => {
@@ -1774,7 +1774,7 @@ impl RenderPassColorAttachmentBuilder {
             }
         };
 
-        wgpu::RenderPassColorAttachment {
+        crate::wgpu::RenderPassColorAttachment {
             view,
             resolve_target: self
                 .resolve_target
@@ -1789,14 +1789,14 @@ impl RenderPassColorAttachmentBuilder {
 #[derive(Debug)]
 pub enum ColorViewPreBuilder<'a> {
     TextureView(TextureViewHandle),
-    Swapchain(MutexGuard<'a,Option<wgpu::SwapChainFrame>>)
+    Swapchain(MutexGuard<'a,Option<crate::wgpu::SwapChainFrame>>)
 }
 
 #[derive(Debug)]
 pub struct RenderPassColorAttachmentPreBuilder<'a> {
     pub view: ColorViewPreBuilder<'a>,
     pub resolve_target: Option<TextureViewHandle>,
-    pub ops: wgpu::Operations<wgpu::Color>,
+    pub ops: crate::wgpu::Operations<crate::wgpu::Color>,
 }
 impl<'a> RenderPassColorAttachmentPreBuilder<'a> {
     pub fn new(descriptor: RenderPassColorAttachmentBuilder)-> Self {
@@ -1810,13 +1810,13 @@ impl<'a> RenderPassColorAttachmentPreBuilder<'a> {
             ops: descriptor.ops.clone()
         }
     }
-    pub fn build(&self) -> wgpu::RenderPassColorAttachment {
+    pub fn build(&self) -> crate::wgpu::RenderPassColorAttachment {
         let view = match &self.view {
             ColorViewPreBuilder::TextureView(view)=>view.as_ref(),
             ColorViewPreBuilder::Swapchain(swapchain)=>&swapchain.as_ref().unwrap().output.view
         };
 
-        wgpu::RenderPassColorAttachment {
+        crate::wgpu::RenderPassColorAttachment {
             view,
             resolve_target: self.resolve_target.as_ref().map(|texture_view|texture_view.as_ref()),
             ops: self.ops.clone()
@@ -1857,16 +1857,16 @@ impl ColorTargetBuilder {
         }
     }
     /*
-    pub fn as_attachment(&self)->wgpu::RenderPassColorAttachment {
+    pub fn as_attachment(&self)->crate::wgpu::RenderPassColorAttachment {
         let texture_view = match self {
             Self::Swapchain(swapchain)=>swapchain.current_frame().as_ref().unwrap().output.view,
             Self::TextureView(texture_view)=>texture_view.as_ref()
         };
-        wgpu::RenderPassColorAttachment{
+        crate::wgpu::RenderPassColorAttachment{
             view: texture_view,
             resolve_target: None,
-            ops: wgpu::Operations {
-                load: wgpu::LoadOp::Load,
+            ops: crate::wgpu::Operations {
+                load: crate::wgpu::LoadOp::Load,
                 store: true,
             },
         }
@@ -2016,7 +2016,7 @@ impl CommandBuilder {
             }
         }
     }
-    pub fn build(&self, encoder: &mut wgpu::CommandEncoder) -> bool {
+    pub fn build(&self, encoder: &mut crate::wgpu::CommandEncoder) -> bool {
         match self {
             Self::BufferToBuffer(command_builder) => command_builder.build(encoder),
             Self::BufferToTexture(command_builder) => command_builder.build(encoder),
@@ -2024,7 +2024,7 @@ impl CommandBuilder {
             Self::TextureToBuffer(command_builder) => command_builder.build(encoder),
             Self::ComputePass { commands } => {
                 let mut compute_pass =
-                    encoder.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None });
+                    encoder.begin_compute_pass(&crate::wgpu::ComputePassDescriptor { label: None });
 
                 for command in commands {
                     if !command.build(&mut compute_pass) {
@@ -2041,8 +2041,8 @@ impl CommandBuilder {
                 commands,
             } => {
                 enum Temp<'a> {
-                    Lock(std::sync::MutexGuard<'a, Option<wgpu::SwapChainFrame>>),
-                    View(&'a Arc<wgpu::TextureView>),
+                    Lock(std::sync::MutexGuard<'a, Option<crate::wgpu::SwapChainFrame>>),
+                    View(&'a Arc<crate::wgpu::TextureView>),
                 }
 
                 let color_attachments: Vec<_> = color_attachments
@@ -2065,7 +2065,7 @@ impl CommandBuilder {
                             Temp::Lock(lock) => &lock.as_ref().unwrap().output.view,
                         };
 
-                        wgpu::RenderPassColorAttachment {
+                        crate::wgpu::RenderPassColorAttachment {
                             view,
                             resolve_target: attachment
                                 .resolve_target
@@ -2077,17 +2077,17 @@ impl CommandBuilder {
                     .collect();
 
                 let depth_stencil_attachment = depth_stencil.as_ref().map(|depth_stencil| {
-                    wgpu::RenderPassDepthStencilAttachment {
+                    crate::wgpu::RenderPassDepthStencilAttachment {
                         view: depth_stencil.as_ref(),
-                        depth_ops: Some(wgpu::Operations {
-                            load: wgpu::LoadOp::Load,
+                        depth_ops: Some(crate::wgpu::Operations {
+                            load: crate::wgpu::LoadOp::Load,
                             store: true,
                         }),
                         stencil_ops: None,
                     }
                 });
 
-                let render_pass_descriptor = wgpu::RenderPassDescriptor {
+                let render_pass_descriptor = crate::wgpu::RenderPassDescriptor {
                     label: Some(label.as_str()),
                     color_attachments: &color_attachments,
                     depth_stencil_attachment,
@@ -2142,7 +2142,7 @@ impl CommandBufferBuilder {
         })
     }
     pub fn build(&self) -> CommandBufferHandle {
-        let descriptor = wgpu::CommandEncoderDescriptor {
+        let descriptor = crate::wgpu::CommandEncoderDescriptor {
             label: Some(self.label.as_str()),
         };
 

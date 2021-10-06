@@ -124,23 +124,23 @@ impl DeviceBatch {
                 Some(swapchain) => {
                     log::error!(target: "Engine","Preparing clear command buffer for {} ",id);
                     let current_frame = swapchain.current_frame();
-                    let color_attachments = vec![wgpu::RenderPassColorAttachment {
+                    let color_attachments = vec![crate::wgpu::RenderPassColorAttachment {
                         view: &current_frame.as_ref().unwrap().output.view,
                         resolve_target: None,
-                        ops: wgpu::Operations {
-                            load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        ops: crate::wgpu::Operations {
+                            load: crate::wgpu::LoadOp::Clear(crate::wgpu::Color::BLACK),
                             store: false,
                         },
                     }];
 
-                    let render_pass_descriptor = wgpu::RenderPassDescriptor {
+                    let render_pass_descriptor = crate::wgpu::RenderPassDescriptor {
                         label: None,
                         color_attachments: &color_attachments,
                         depth_stencil_attachment: None,
                     };
                     let mut encoder = device
                         .1
-                        .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+                        .create_command_encoder(&crate::wgpu::CommandEncoderDescriptor { label: None });
                     {
                         let mut _render_pass = encoder.begin_render_pass(&render_pass_descriptor);
                     }

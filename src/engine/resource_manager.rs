@@ -148,7 +148,7 @@ impl ResourceManager {
     pub fn entity_device(
         &self,
         id: &EntityId,
-    ) -> Option<&Arc<(wgpu::Adapter, wgpu::Device, wgpu::Queue)>> {
+    ) -> Option<&Arc<(crate::wgpu::Adapter, crate::wgpu::Device, crate::wgpu::Queue)>> {
         let parents = self.inner.entity_parents(id);
         match parents.get(0) {
             Some(parent_id) => {
@@ -449,7 +449,7 @@ impl ResourceManager {
     pub(crate) fn take_command_buffer(
         &mut self,
         id: &CommandBufferId,
-    ) -> Option<wgpu::CommandBuffer> {
+    ) -> Option<crate::wgpu::CommandBuffer> {
         match self.inner.take_entity_handle(id.id_ref()) {
             Some(ResourceHandle::CommandBuffer(handle)) => match Arc::try_unwrap(handle) {
                 Ok(unwrapped_command_buffer) => Some(unwrapped_command_buffer),

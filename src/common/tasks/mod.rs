@@ -20,7 +20,7 @@ pub trait TaskTrait: Downcast + Send + Sync {
         Vec::new()
     }
 
-    //fn features_and_limits()->(wgpu::Features,wgpu::Limits) {(wgpu::Features::default(),wgpu::Limits::default())}
+    //fn features_and_limits()->(crate::wgpu::Features,crate::wgpu::Limits) {(crate::wgpu::Features::default(),crate::wgpu::Limits::default())}
 }
 impl_downcast!(TaskTrait);
 
