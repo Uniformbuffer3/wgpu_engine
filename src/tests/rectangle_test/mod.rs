@@ -613,7 +613,7 @@ fn rectangle_task() {
                                 .unwrap();
                         }
                         pal::SurfaceEventType::Removed => {
-                            wgpu_engine.remove_surface(resource_id);
+                            wgpu_engine.destroy_surface(resource_id);
                             if wgpu_engine.surface_count() == 0 {
                                 break 'main_loop;
                             }

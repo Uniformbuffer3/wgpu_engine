@@ -72,6 +72,7 @@ impl TaskManager {
             .flatten()
     }
     pub(crate) fn commit_tasks(&mut self, batch: &mut Batch) {
+        log::info!(target: "Engine","Committing tasks updates");
         self.0.print_graphviz();
 
         let mut events = Vec::new();

@@ -194,7 +194,7 @@ impl RectangleManager {
             .pending_write_field(id, offset, position)
     }
 
-    pub fn remove_surface(&mut self, id: &usize) -> bool {
+    pub fn destroy_surface(&mut self, id: &usize) -> bool {
         self.rectangle_data_buffer
             .release_pending(id)
             .map(|_associated_data| {

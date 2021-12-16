@@ -43,7 +43,7 @@ macro_rules! make_update_context_functions {
                     id: &mut [<$name:camel Id>],
                     descriptor: impl Into<[<$name:camel Descriptor>]>,
                 ) -> bool {
-                    self.resource_manager.[<update_ $name:snake _descriptor>](id,descriptor)
+                    self.resource_manager.[<update_ $name:snake _descriptor>](&self.task,id,descriptor)
                 }
                 /*
                 pub fn [<update_ $name:snake _descriptor_mut>]<T>(
@@ -55,7 +55,7 @@ macro_rules! make_update_context_functions {
                 }
                 */
                 pub fn [<remove_ $name:snake>](&mut self, id: &[<$name:camel Id>]) -> Result<(), ()> {
-                    self.resource_manager.[<remove_ $name:snake>](id)
+                    self.resource_manager.[<remove_ $name:snake>](&self.task,id)
                 }
             )*
         }
@@ -82,7 +82,7 @@ impl<'a> UpdateContext<'a> {
         }
     }
 
-    pub fn is_damaged(&self, id: &EntityId)->bool {
+    pub fn is_damaged(&self, id: &EntityId) -> bool {
         self.resource_manager.is_damaged(id)
     }
 
@@ -114,9 +114,8 @@ impl<'a> UpdateContext<'a> {
         self.events
     }
     pub(crate) fn push_event(&mut self, event: ResourceEvent) {
-
-        if let Some(true) = self.events.last().map(|last|last==&event){}
-        else {
+        if let Some(true) = self.events.last().map(|last| last == &event) {
+        } else {
             self.events.push(event);
         }
 

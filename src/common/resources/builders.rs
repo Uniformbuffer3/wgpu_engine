@@ -8,6 +8,9 @@ pub enum ResourceBuilderError {
     MissingDependencies,
 }
 
+/**
+A enum combining all the possible resource builders.
+*/
 pub enum ResourceBuilder {
     Instance(InstanceBuilder),
     Device(DeviceBuilder),
@@ -376,17 +379,80 @@ impl TextureBuilder {
         })
     }
     pub fn build(&self) -> TextureHandle {
-        let descriptor = crate::wgpu::TextureDescriptor {
-            label: Some(self.label.as_str()),
-            size: self.size,
-            mip_level_count: self.mip_level_count,
-            sample_count: self.sample_count,
-            dimension: self.dimension,
-            format: self.format,
-            usage: self.usage,
-        };
-        log::info!(target: "EntityManager","Building {}",self.id);
-        Arc::new(self.device.1.create_texture(&descriptor))
+        match &self.source {
+            TextureSource::Local => {
+                let descriptor = crate::wgpu::TextureDescriptor {
+                    label: Some(self.label.as_str()),
+                    size: self.size,
+                    mip_level_count: self.mip_level_count,
+                    sample_count: self.sample_count,
+                    dimension: self.dimension,
+                    format: self.format,
+                    usage: self.usage,
+                };
+                log::info!(target: "EntityManager","Building {}",self.id);
+                Arc::new(self.device.1.create_texture(&descriptor))
+            }
+            #[cfg(feature = "wgpu_custom")]
+            TextureSource::DmaBuf {
+                fd,
+                drm_properties,
+                offset,
+            } => {
+                let descriptor = crate::wgpu::ExternalTextureDescriptor {
+                    label: Some(self.label.as_str()),
+                    external_memory: crate::wgpu::ExternalImageMemory::DmaBuf(
+                        (*fd).into(),
+                        drm_properties.clone(),
+                    ),
+                    size: self.size,
+                    offset: *offset,
+                    mip_level_count: self.mip_level_count,
+                    sample_count: self.sample_count,
+                    dimension: self.dimension,
+                    format: self.format,
+                    usage: self.usage,
+                };
+
+                log::info!(target: "EntityManager","Building {}",self.id);
+                Arc::new(self.device.1.import_texture(descriptor))
+            }
+            #[cfg(feature = "wgpu_custom")]
+            TextureSource::OpaqueFd { fd, offset } => {
+                let format_description = self.format.describe();
+                let size =
+                    format_description.block_size as u32 * self.size.width * self.size.height;
+
+                let ptr = unsafe {
+                    nix::sys::mman::mmap(
+                        std::ptr::null_mut(),
+                        size as usize,
+                        nix::sys::mman::ProtFlags::PROT_READ,
+                        nix::sys::mman::MapFlags::MAP_SHARED,
+                        *fd,
+                        0,
+                    )
+                    .unwrap()
+                };
+
+                let descriptor = crate::wgpu::ExternalTextureDescriptor {
+                    label: Some(self.label.as_str()),
+                    //external_memory: crate::wgpu::ExternalImageMemory::OpaqueFd((*fd).into()),
+                    external_memory: crate::wgpu::ExternalImageMemory::HostMappedForeignMemory(
+                        ptr.into(),
+                    ),
+                    size: self.size,
+                    offset: *offset,
+                    mip_level_count: self.mip_level_count,
+                    sample_count: self.sample_count,
+                    dimension: self.dimension,
+                    format: self.format,
+                    usage: self.usage,
+                };
+                log::info!(target: "EntityManager","Building {}",self.id);
+                Arc::new(self.device.1.import_texture(descriptor))
+            }
+        }
     }
 }
 
@@ -573,7 +639,9 @@ impl ShaderModuleBuilder {
                 ShaderSource::SpirV(ref spirv) => {
                     crate::wgpu::ShaderSource::SpirV(Borrowed(spirv.as_slice()))
                 }
-                ShaderSource::Wgsl(ref wgsl) => crate::wgpu::ShaderSource::Wgsl(Borrowed(wgsl.as_str())),
+                ShaderSource::Wgsl(ref wgsl) => {
+                    crate::wgpu::ShaderSource::Wgsl(Borrowed(wgsl.as_str()))
+                }
             },
             flags: self.flags,
         };
@@ -745,7 +813,9 @@ impl BindingResourceBuilder {
         support2: &'a mut Vec<&'a crate::wgpu::TextureView>,
     ) -> crate::wgpu::BindingResource<'a> {
         match self {
-            Self::Buffer(buffer_binding) => crate::wgpu::BindingResource::Buffer(buffer_binding.build()),
+            Self::Buffer(buffer_binding) => {
+                crate::wgpu::BindingResource::Buffer(buffer_binding.build())
+            }
             Self::BufferArray(buffer_bindings) => {
                 buffer_bindings
                     .iter()
@@ -1716,9 +1786,11 @@ impl ColorViewBuilder {
             },
             ColorView::Swapchain(ref id) => match resource_manager.swapchain_handle_ref(id) {
                 Some(swapchain) => {
-                    if swapchain.current_frame().is_none(){return Err(ResourceBuilderError::MissingDependencies);}
+                    if swapchain.current_frame().is_none() {
+                        return Err(ResourceBuilderError::MissingDependencies);
+                    }
                     Ok(Self::Swapchain(swapchain.clone()))
-                },
+                }
                 None => {
                     log::error!(target: "EntityManager","Failed to gather Command::RenderPass resources: Swapchain {} not found",id);
                     Err(ResourceBuilderError::MissingDependencies)

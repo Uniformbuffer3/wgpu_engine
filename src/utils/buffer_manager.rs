@@ -25,8 +25,10 @@ pub struct BufferManager<D: bytemuck::Pod + Sized, A> {
     command_buffer: CommandBufferId,
     pending_copies: Vec<Command>,
     pending_writes: Vec<BufferWrite>,
+
+    support_buffer: BufferId,
 }
-impl<D: bytemuck::Pod + Sized, A> BufferManager<D, A> {
+impl<D: bytemuck::Pod + Sized, A: std::fmt::Debug> BufferManager<D, A> {
     pub fn new(
         update_context: &mut UpdateContext,
         label: String,
@@ -43,6 +45,17 @@ impl<D: bytemuck::Pod + Sized, A> BufferManager<D, A> {
 
         let buffer = update_context
             .add_buffer_descriptor(descriptor.clone())
+            .unwrap();
+
+        let support_buffer_descriptor = BufferDescriptor {
+            label: label.clone() + " support buffer",
+            device,
+            size: std::mem::size_of::<D>() as u64,
+            usage: crate::wgpu::BufferUsage::COPY_SRC | crate::wgpu::BufferUsage::COPY_DST,
+        };
+
+        let support_buffer = update_context
+            .add_buffer_descriptor(support_buffer_descriptor.clone())
             .unwrap();
 
         let command_buffer = update_context
@@ -70,6 +83,8 @@ impl<D: bytemuck::Pod + Sized, A> BufferManager<D, A> {
             command_buffer,
             pending_copies,
             pending_writes,
+
+            support_buffer,
         }
     }
     pub fn id(&self) -> &BufferId {
@@ -88,7 +103,7 @@ impl<D: bytemuck::Pod + Sized, A> BufferManager<D, A> {
         self.descriptor.size as usize / std::mem::size_of::<D>()
     }
     pub fn next_slot(&self) -> usize {
-        self.size()
+        self.len()
     }
 
     pub fn request(&mut self, id: usize, auxiliary_data: A, data: D) {
@@ -106,43 +121,69 @@ impl<D: bytemuck::Pod + Sized, A> BufferManager<D, A> {
         let removed_slot = if let Some((id, _)) = self.id_map.get(buffer_index) {
             *id
         } else {
+            log::error!(target: "Buffer Manager","release_pending: buffer_index {} does not exists",buffer_index);
             return None;
         };
 
-        if removed_slot == self.id_map.len() - 1 {
+        let last_slot = self.id_map.len() - 1;
+        if removed_slot == last_slot {
             self.id_map
                 .remove(buffer_index)
                 .map(|(_, associated_data)| associated_data)
         } else {
-            let last_slot = self.id_map.len() - 1;
-            let last_key = *self
-                .id_map
-                .iter()
-                .find(|(_, value)| value.0 == last_slot)
-                .unwrap()
-                .0;
-
-            let removed_element = match self
-                .id_map
-                .remove(buffer_index)
-                .map(|(_, associated_data)| associated_data)
-            {
+            let removed_element = match self.id_map.remove(buffer_index) {
                 Some(removed_element) => removed_element,
                 None => return None,
             };
 
-            let last = self.id_map.remove(&last_key).unwrap();
-            self.id_map.insert(*buffer_index, last);
-            let command = Command::BufferToBuffer(BufferToBufferCopy {
-                src_buffer: self.buffer,
-                src_offset: (last_slot * std::mem::size_of::<D>()) as u64,
-                dst_buffer: self.buffer,
-                dst_offset: (removed_slot * std::mem::size_of::<D>()) as u64,
-                size: std::mem::size_of::<D>() as u64,
-            });
-            self.pending_copies.push(command);
+            //Last
+            self.id_map
+                .iter_mut()
+                .find(|(_id, value)| value.0 == last_slot)
+                .map(|(_id, value)| {
+                    value.0 = removed_element.0;
+                    //println!("Last: {:#?}",(id,value));
+                });
+            //println!("Last key: {}",last_key);
 
-            Some(removed_element)
+            //println!("Removed element: {:#?}",removed_element);
+            /*
+            let last = self.id_map.remove(&last_key).unwrap();
+            println!("Last: {:#?}",last);
+            self.id_map.insert(*buffer_index, last);
+            */
+
+            /*
+                        let command = Command::BufferToBuffer(BufferToBufferCopy {
+                            src_buffer: self.buffer,
+                            src_offset: (last_slot * std::mem::size_of::<D>()) as u64,
+                            dst_buffer: self.buffer,
+                            dst_offset: (removed_slot * std::mem::size_of::<D>()) as u64,
+                            size: std::mem::size_of::<D>() as u64,
+                        });
+                        self.pending_copies.push(command);
+            */
+
+            let mut commands = vec![
+                Command::BufferToBuffer(BufferToBufferCopy {
+                    src_buffer: self.buffer,
+                    src_offset: (last_slot * std::mem::size_of::<D>()) as u64,
+                    dst_buffer: self.support_buffer,
+                    dst_offset: 0,
+                    size: std::mem::size_of::<D>() as u64,
+                }),
+                Command::BufferToBuffer(BufferToBufferCopy {
+                    src_buffer: self.support_buffer,
+                    src_offset: 0,
+                    dst_buffer: self.buffer,
+                    dst_offset: (removed_slot * std::mem::size_of::<D>()) as u64,
+                    size: std::mem::size_of::<D>() as u64,
+                }),
+            ];
+            self.pending_copies.append(&mut commands);
+
+            //println!("Associated data from middle is some: true");
+            Some(removed_element.1)
         }
     }
 

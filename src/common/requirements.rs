@@ -19,6 +19,9 @@ impl Into<(crate::wgpu::Features, crate::wgpu::Limits)> for Requirements {
 }
 impl Default for Requirements {
     fn default() -> Self {
-        Requirements(crate::wgpu::Features::default(), crate::wgpu::Limits::default())
+        Requirements(
+            crate::wgpu::Features::default(),
+            crate::wgpu::Limits::default(),
+        )
     }
 }

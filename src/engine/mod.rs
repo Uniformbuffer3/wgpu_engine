@@ -16,6 +16,9 @@ pub enum WGpuEngineError {
     InitializationFailed,
 }
 
+/**
+The main entry point of the engine.
+*/
 pub struct WGpuEngine {
     runtime: tokio::runtime::Runtime,
     task_manager: TaskManager,

@@ -42,6 +42,9 @@ impl HaveDescriptor for TaskDescriptor {
     fn descriptor_mut(&mut self) -> &mut Self::D {
         self
     }
+    fn state_type(&self) -> StateType {
+        StateType::Statefull
+    }
     fn needs_update(&self, _other: &Self) -> bool {
         false
     }

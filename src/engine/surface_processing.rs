@@ -29,7 +29,7 @@ impl WGpuEngine {
             .is_some())
     }
 
-    pub fn remove_surface(&mut self, external_id: usize) {
+    pub fn destroy_surface(&mut self, external_id: usize) {
         assert!(self
             .task_manager
             .task_handle_cast_mut(&self.engine_task, |engine_task: &mut EngineTask| {

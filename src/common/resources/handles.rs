@@ -2,7 +2,11 @@ use std::convert::TryInto;
 use std::sync::{Arc, Mutex, MutexGuard};
 
 pub type InstanceHandle = Arc<crate::wgpu::Instance>;
-pub type DeviceHandle = Arc<(crate::wgpu::Adapter, crate::wgpu::Device, crate::wgpu::Queue)>;
+pub type DeviceHandle = Arc<(
+    crate::wgpu::Adapter,
+    crate::wgpu::Device,
+    crate::wgpu::Queue,
+)>;
 pub type SwapchainHandle = Arc<Swapchain>;
 
 pub type BufferHandle = Arc<crate::wgpu::Buffer>;
@@ -20,6 +24,9 @@ pub type ComputePipelineHandle = Arc<crate::wgpu::ComputePipeline>;
 pub type CommandBufferHandle = Arc<crate::wgpu::CommandBuffer>;
 
 #[derive(Debug, Clone)]
+/**
+A enum combining all the possible resource handles.
+*/
 pub enum ResourceHandle {
     Instance(InstanceHandle),
     Device(DeviceHandle),
@@ -230,7 +237,11 @@ pub struct Swapchain {
 
 impl Swapchain {
     pub fn new(
-        device: &Arc<(crate::wgpu::Adapter, crate::wgpu::Device, crate::wgpu::Queue)>,
+        device: &Arc<(
+            crate::wgpu::Adapter,
+            crate::wgpu::Device,
+            crate::wgpu::Queue,
+        )>,
         surface: Arc<crate::wgpu::Surface>,
         width: u32,
         height: u32,

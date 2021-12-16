@@ -12,15 +12,10 @@ make_id!(Task);
 /// It also contains the render and compute task to drive the command buffer logic.
 pub trait TaskTrait: Downcast + Send + Sync {
     fn name(&self) -> String;
-
-    fn update(&mut self) {}
-
     fn update_resources(&mut self, _update_context: &mut UpdateContext) {}
     fn command_buffers(&self) -> Vec<CommandBufferId> {
         Vec::new()
     }
-
-    //fn features_and_limits()->(crate::wgpu::Features,crate::wgpu::Limits) {(crate::wgpu::Features::default(),crate::wgpu::Limits::default())}
 }
 impl_downcast!(TaskTrait);
 
@@ -46,6 +41,9 @@ impl HaveDescriptor for Task {
     }
     fn descriptor_mut(&mut self) -> &mut Self::D {
         &mut self.descriptor
+    }
+    fn state_type(&self) -> StateType {
+        self.descriptor.state_type()
     }
     fn needs_update(&self, other: &Self::D) -> bool {
         self.descriptor.needs_update(other)

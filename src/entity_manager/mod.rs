@@ -56,6 +56,9 @@ impl std::fmt::Display for Dependency {
 }
 
 #[derive(Debug)]
+/**
+This struct store entities into a graph based on the declared dependencies.
+*/
 pub struct EntityManager<N: HaveDependencies> {
     dependency_graph: StableDiGraph<N, Dependency, usize>,
 }
@@ -71,7 +74,7 @@ impl<N: HaveDependencies> EntityManager<N> {
     pub(crate) fn graph_mut(&mut self) -> &mut StableDiGraph<N, Dependency, usize> {
         &mut self.dependency_graph
     }
-
+    /// Iterate over all the entities.
     pub(crate) fn entities(&self) -> impl Iterator<Item = EntityId> + '_ {
         self.dependency_graph
             .node_indices()
@@ -79,7 +82,7 @@ impl<N: HaveDependencies> EntityManager<N> {
 
         //self.dependency_graph.node_weights()
     }
-
+    /// Get an entity.
     pub(crate) fn entity(&self, id: &EntityId) -> Option<&N> {
         self.graph().node_weight(NodeIndex::new(id.id()))
     }
@@ -87,13 +90,14 @@ impl<N: HaveDependencies> EntityManager<N> {
         self.graph_mut().node_weight_mut(NodeIndex::new(id.id()))
     }
 
+    /// Get the parents of an entity.
     pub(crate) fn entity_parents(&self, id: &EntityId) -> Vec<EntityId> {
         self.graph()
             .neighbors_directed((*id).into(), Direction::Incoming)
             .map(|index| EntityId::new(index.index()))
             .collect()
     }
-
+    /// Add an entity to the graph.
     pub(crate) fn add_entity(
         &mut self,
         entity: impl Into<N>,
@@ -112,7 +116,7 @@ impl<N: HaveDependencies> EntityManager<N> {
 
         Ok(id)
     }
-
+    /// Update an entity.
     pub(crate) fn update_entity<T>(
         &mut self,
         id: &EntityId,
@@ -147,6 +151,7 @@ impl<N: HaveDependencies> EntityManager<N> {
         }
     }
 
+    /// Remove an entity from the graph.
     pub(crate) fn remove_entity(&mut self, id: &EntityId) -> Result<(), ()> {
         if self.graph_mut().remove_node((*id).into()).is_some() {
             Ok(())
@@ -154,17 +159,7 @@ impl<N: HaveDependencies> EntityManager<N> {
             Err(())
         }
     }
-    pub(crate) fn remove_dependency(&mut self, entity1: &EntityId, entity2: &EntityId) -> bool {
-        if let Some(edge_id) = self
-            .graph()
-            .find_edge(NodeIndex::new(entity1.id()), NodeIndex::new(entity2.id()))
-        {
-            self.graph_mut().remove_edge(edge_id);
-            true
-        } else {
-            false
-        }
-    }
+    /// Add a dependency between two entities.
     pub(crate) fn add_dependency(&mut self, entity1: &EntityId, entity2: &EntityId) {
         let node1 = NodeIndex::new(entity1.id());
         let node2 = NodeIndex::new(entity2.id());
@@ -183,6 +178,20 @@ impl<N: HaveDependencies> EntityManager<N> {
             _ => (),
         }
     }
+    /// Remove a dependency between two entities.
+    pub(crate) fn remove_dependency(&mut self, entity1: &EntityId, entity2: &EntityId) -> bool {
+        if let Some(edge_id) = self
+            .graph()
+            .find_edge(NodeIndex::new(entity1.id()), NodeIndex::new(entity2.id()))
+        {
+            self.graph_mut().remove_edge(edge_id);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// List all the dependencies of an entity.
     pub(crate) fn dependencies(&mut self, entity: &EntityId) -> Vec<EntityId> {
         self.graph()
             .neighbors_directed((*entity).into(), Direction::Incoming)

@@ -7,6 +7,9 @@ use std::collections::HashSet;
 use std::ops::Deref;
 
 #[derive(Debug)]
+/**
+A [EntityManager][crate::entity_manager::EntityManager] that can keep track of damaged entities.
+*/
 pub struct DMGEntityManager<N: HaveDescriptorAndHandle>(EntityManager<N>, HashSet<EntityId>);
 impl<N: HaveDescriptorAndHandle> DMGEntityManager<N> {
     pub fn new() -> Self {
@@ -120,23 +123,33 @@ impl<
     }
 }
 
-impl<O: PartialEq ,N: HaveDescriptorAndHandle + HaveOwners<O=O>> DMGEntityManager<N> {
-    pub fn entity_owners(&mut self, id: &EntityId)->Option<Vec<O>>{
-        self.0.entity(id).map(|entity|entity.owners())
+impl<O: PartialEq, N: HaveDescriptorAndHandle + HaveOwners<O = O>> DMGEntityManager<N> {
+    pub fn entity_owners(&mut self, id: &EntityId) -> Option<Vec<O>> {
+        self.0.entity(id).map(|entity| entity.owners())
     }
-    pub fn add_entity_owner(&mut self, id: &EntityId, new_owner: O){
+    pub fn add_entity_owner(&mut self, id: &EntityId, new_owner: O) {
         self.0.entity_mut(id).map(|entity| {
-            if entity.owners_ref().iter().position(|current_owner|current_owner == &new_owner).is_none(){
+            if entity
+                .owners_ref()
+                .iter()
+                .position(|current_owner| current_owner == &new_owner)
+                .is_none()
+            {
                 entity.owners_mut().push(new_owner);
             }
         });
     }
-    pub fn remove_entity_owner(&mut self, id: &EntityId, new_owner: O){
+    pub fn remove_entity_owner(&mut self, id: &EntityId, owner: &O) -> Option<usize> {
         self.0.entity_mut(id).map(|entity| {
-            if let Some(index) = entity.owners_ref().iter().position(|current_owner|current_owner == &new_owner){
+            if let Some(index) = entity
+                .owners_ref()
+                .iter()
+                .position(|current_owner| current_owner == owner)
+            {
                 entity.owners_mut().remove(index);
             }
-        });
+            entity.owners_ref().len()
+        })
     }
 }
 

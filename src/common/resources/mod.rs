@@ -13,6 +13,9 @@ pub use crate::TaskId;
 use std::ops::{Deref, DerefMut};
 
 #[derive(Debug, Clone)]
+/**
+A combination of owners, a descriptor and a handle.
+*/
 pub struct Resource {
     owners: Vec<TaskId>,
     current_descriptor: ResourceDescriptor,
@@ -37,10 +40,10 @@ impl HaveOwners for Resource {
     fn owners(&self) -> Vec<TaskId> {
         self.owners.clone()
     }
-    fn owners_ref(&self)->&Vec<TaskId> {
+    fn owners_ref(&self) -> &Vec<TaskId> {
         &self.owners
     }
-    fn owners_mut(&mut self)->&mut Vec<TaskId> {
+    fn owners_mut(&mut self) -> &mut Vec<TaskId> {
         &mut self.owners
     }
 }
@@ -59,6 +62,9 @@ impl HaveDescriptor for Resource {
     }
     fn descriptor_mut(&mut self) -> &mut Self::D {
         &mut self.current_descriptor
+    }
+    fn state_type(&self) -> StateType {
+        self.current_descriptor.state_type()
     }
     fn needs_update(&self, other: &Self::D) -> bool {
         self.current_descriptor.needs_update(other)

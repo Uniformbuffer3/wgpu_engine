@@ -160,113 +160,115 @@ impl TaskTrait for EngineTask {
         Self::TASK_NAME.to_string()
     }
 
-    fn update(&mut self) {}
-
     fn update_resources(&mut self, update_context: &mut UpdateContext) {
         let events: Vec<_> = self.pending_commands.drain(..).collect();
 
-
-
-        let prepared_swapchains: HashSet<_> = events.into_iter().filter_map(|event| match event {
-            PendingCommand::CreateSwapchain {
-                external_id,
-                label,
-                surface,
-                width,
-                height,
-            } => {
-                let device = match self.devices.get(0) {
-                    Some(device) => *device,
-                    None => return None,
-                };
-
-                let format = update_context
-                    .device_handle_ref(&device)
-                    .unwrap()
-                    .0
-                    .get_swap_chain_preferred_format(&surface)
-                    .expect("Incompatible device");
-
-                let usage = crate::wgpu::TextureUsage::RENDER_ATTACHMENT;
-                let present_mode = crate::wgpu::PresentMode::Mailbox;
-
-                let descriptor = SwapchainDescriptor {
+        let prepared_swapchains: HashSet<_> = events
+            .into_iter()
+            .filter_map(|event| match event {
+                PendingCommand::CreateSwapchain {
+                    external_id,
                     label,
-                    device,
                     surface,
-                    format,
                     width,
                     height,
-                    usage,
-                    present_mode,
-                };
+                } => {
+                    let device = match self.devices.get(0) {
+                        Some(device) => *device,
+                        None => return None,
+                    };
 
-                match update_context.add_swapchain_descriptor(descriptor) {
-                    Ok(id) => {
-                        //swapchain_to_prepare.remove(&id);
-                        self.swapchains.insert(external_id, id);
-                        update_context.push_event(ResourceEvent::SwapchainCreated(id));
-                        log::info!(target: "EngineTask","{} created",id);
-                        Some(id)
-                    }
-                    Err(()) => None,
-                }
-            }
-            PendingCommand::ResizeSwapchain {
-                external_id,
-                width,
-                height,
-            } => {
+                    let format = update_context
+                        .device_handle_ref(&device)
+                        .unwrap()
+                        .0
+                        .get_swap_chain_preferred_format(&surface)
+                        .expect("Incompatible device");
 
-                if let Some(id) = self.swapchains.get_mut(&external_id) {
-                    update_context.swapchain_descriptor_ref(id)
-                    .cloned()
-                    .map(|mut descriptor|{
-                        log::info!(target: "EngineTask","Resizing swapchain");
-                        descriptor.width = width;
-                        descriptor.height = height;
+                    let usage = crate::wgpu::TextureUsage::RENDER_ATTACHMENT;
+                    let present_mode = crate::wgpu::PresentMode::Mailbox;
 
-                        let result = update_context.update_swapchain_descriptor(id,descriptor);
-                        if result {
+                    let descriptor = SwapchainDescriptor {
+                        label,
+                        device,
+                        surface,
+                        format,
+                        width,
+                        height,
+                        usage,
+                        present_mode,
+                    };
+
+                    match update_context.add_swapchain_descriptor(descriptor) {
+                        Ok(id) => {
                             //swapchain_to_prepare.remove(&id);
-                            update_context.swapchain_handle_ref(id).map(|handle|handle.present());
-                            update_context.push_event(ResourceEvent::SwapchainUpdated(*id));
-                            log::info!(target: "EngineTask","{} resized",id);
-                            Some(*id)
-                        } else {
-                            log::error!("Surface {} does not exists", id);
-                            None
+                            self.swapchains.insert(external_id, id);
+                            update_context.push_event(ResourceEvent::SwapchainCreated {
+                                external_id,
+                                swapchain: id,
+                            });
+                            log::info!(target: "EngineTask","{} created",id);
+                            Some(id)
                         }
-                    }).flatten()
+                        Err(()) => None,
+                    }
                 }
-                else{None}
-            }
-            PendingCommand::DestroySwapchain { external_id } => {
-                self.swapchains.remove(&external_id).map(|id|{
-                    //swapchain_to_prepare.remove(&id);
-                    update_context.remove_swapchain(&id).unwrap();
-                    update_context.push_event(ResourceEvent::SwapchainDestroyed(id));
-                    log::info!(target: "EngineTask","{} destroyed",id);
-                    id
-                })
-            }
-        }).collect();
+                PendingCommand::ResizeSwapchain {
+                    external_id,
+                    width,
+                    height,
+                } => {
+                    if let Some(id) = self.swapchains.get_mut(&external_id) {
+                        update_context
+                            .swapchain_descriptor_ref(id)
+                            .cloned()
+                            .map(|mut descriptor| {
+                                log::info!(target: "EngineTask","Resizing swapchain");
+                                descriptor.width = width;
+                                descriptor.height = height;
 
-        let current_swapchains: HashSet<SwapchainId> =
-            self.swapchains.values().cloned().collect();
+                                let result =
+                                    update_context.update_swapchain_descriptor(id, descriptor);
+                                if result {
+                                    //swapchain_to_prepare.remove(&id);
+                                    update_context
+                                        .swapchain_handle_ref(id)
+                                        .map(|handle| handle.present());
+                                    update_context.push_event(ResourceEvent::SwapchainUpdated(*id));
+                                    log::info!(target: "EngineTask","{} resized",id);
+                                    Some(*id)
+                                } else {
+                                    log::error!("Surface {} does not exists", id);
+                                    None
+                                }
+                            })
+                            .flatten()
+                    } else {
+                        None
+                    }
+                }
+                PendingCommand::DestroySwapchain { external_id } => {
+                    self.swapchains.remove(&external_id).map(|id| {
+                        //swapchain_to_prepare.remove(&id);
+                        update_context.remove_swapchain(&id).unwrap();
+                        update_context.push_event(ResourceEvent::SwapchainDestroyed(id));
+                        log::info!(target: "EngineTask","{} destroyed",id);
+                        id
+                    })
+                }
+            })
+            .collect();
 
-        println!("Prepared swapchains: {:#?}",prepared_swapchains);
-        println!("Current swapchains: {:#?}",current_swapchains);
-        println!("Outdated swapchains: {:#?}",current_swapchains.difference(&prepared_swapchains));
+        let current_swapchains: HashSet<SwapchainId> = self.swapchains.values().cloned().collect();
 
-        current_swapchains.difference(&prepared_swapchains).for_each(|id| {
-            update_context
-                .swapchain_handle_ref(&id)
-                .map(|handle|{
+        current_swapchains
+            .difference(&prepared_swapchains)
+            .for_each(|id| {
+                update_context.swapchain_handle_ref(&id).map(|handle| {
                     log::info!(target: "EngineTask","Preparing frame for {}",id);
                     handle.prepare_frame()
                 });
-        });
+            });
     }
     fn command_buffers(&self) -> Vec<CommandBufferId> {
         Vec::new()

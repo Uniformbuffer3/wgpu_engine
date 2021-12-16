@@ -75,11 +75,17 @@ impl TriangleTask {
         update_context: &mut UpdateContext,
         resources: &mut DeviceResources,
     ) {
-        update_context.remove_command_buffer(&resources.command_buffer);
-        update_context.remove_render_pipeline(&resources.render_pipeline);
-        update_context.remove_shader_module(&resources.shader_module);
+        update_context
+            .remove_command_buffer(&resources.command_buffer)
+            .unwrap();
+        update_context
+            .remove_render_pipeline(&resources.render_pipeline)
+            .unwrap();
+        update_context
+            .remove_shader_module(&resources.shader_module)
+            .unwrap();
         resources.swapchains.iter().for_each(|swapchain| {
-            update_context.remove_swapchain(swapchain);
+            update_context.remove_swapchain(swapchain).unwrap();
         });
     }
 
@@ -176,11 +182,8 @@ impl TriangleTask {
             render_pipeline_descriptor
         ));
 
-        let command_buffer_descriptor = Self::prepare_command_buffer(
-            device,
-            &resources.swapchains,
-            resources.render_pipeline,
-        );
+        let command_buffer_descriptor =
+            Self::prepare_command_buffer(device, &resources.swapchains, resources.render_pipeline);
         assert!(update_context.update_command_buffer_descriptor(
             &mut resources.command_buffer,
             command_buffer_descriptor
@@ -194,8 +197,6 @@ impl TaskTrait for TriangleTask {
     }
 
     fn update_resources(&mut self, update_context: &mut UpdateContext) {
-        println!("Events: {:#?}", update_context.events());
-
         for event in update_context.events().clone() {
             match event {
                 ResourceEvent::SwapchainCreated(swapchain) => {
@@ -260,9 +261,9 @@ fn triangle_task() {
         2,
         crate::wgpu::Features::default(),
         crate::wgpu::Limits::default(),
-        |_id, _tokio_runtime, update_context| TriangleTask::new(update_context)
+        |_id, _tokio_runtime, update_context| TriangleTask::new(update_context),
     )
-/*
+    /*
     use std::collections::HashSet;
     env_logger::init();
     use crate::WGpuEngine;
@@ -318,7 +319,7 @@ fn triangle_task() {
                         }
                         pal::SurfaceEventType::Removed => {
                             let id = surface_id.id() as usize;
-                            wgpu_engine.remove_surface(id);
+                            wgpu_engine.destroy_surface(id);
                             surfaces.remove(&id);
                             if surfaces.is_empty() {
                                 break 'main_loop;

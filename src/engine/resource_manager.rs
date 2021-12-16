@@ -7,7 +7,6 @@ use std::collections::HashSet;
 use std::convert::TryInto;
 use std::sync::Arc;
 
-
 macro_rules! make_resource_functions {
     ($name: ident) => {
         paste::paste! {
@@ -51,11 +50,12 @@ macro_rules! make_resource_functions {
 
             pub(crate) fn [<update_ $name:snake _descriptor>](
                 &mut self,
+                task: &TaskId,
                 id: &mut [<$name:camel Id>],
                 descriptor: impl Into<[<$name:camel Descriptor>]>,
             ) -> bool {
                 let id: ResourceIdMut = id.into();
-                self.update_resource_descriptor(id,descriptor.into())
+                self.update_resource_descriptor(task,id,descriptor.into())
             }
             /*
             pub(crate) fn [<update_ $name:snake _descriptor_mut>]<T>(
@@ -70,8 +70,8 @@ macro_rules! make_resource_functions {
                 }).flatten()
             }
             */
-            pub fn [<remove_ $name:snake>](&mut self, id: &[<$name:camel Id>]) -> Result<(), ()> {
-                self.remove_resource(&id.clone().into())
+            pub fn [<remove_ $name:snake>](&mut self, task: &TaskId, id: &[<$name:camel Id>]) -> Result<(), ()> {
+                self.remove_resource(task, &id.clone().into())
             }
         }
     };
@@ -145,10 +145,7 @@ impl ResourceManager {
         }
     }
 
-    pub fn entity_device(
-        &self,
-        id: &EntityId,
-    ) -> Option<&Arc<(crate::wgpu::Adapter, crate::wgpu::Device, crate::wgpu::Queue)>> {
+    pub fn entity_device(&self, id: &EntityId) -> Option<&DeviceHandle> {
         let parents = self.inner.entity_parents(id);
         match parents.get(0) {
             Some(parent_id) => {
@@ -181,18 +178,24 @@ impl ResourceManager {
         self.inner.take_entity_handle(id)
     }
 
+    fn search_compatible(
+        &self,
+        id: Option<&ResourceId>,
+        descriptor: &ResourceDescriptor,
+    ) -> Option<ResourceId> {
+        if descriptor.state_type() == StateType::Statefull {
+            return None;
+        }
 
-/*
-
-*/
-    fn search_compatible(&self,id: Option<&ResourceId>, descriptor: &ResourceDescriptor) -> Option<ResourceId> {
         match descriptor {
             ResourceDescriptor::Instance(descriptor) => self
                 .instances
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.instance_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -203,7 +206,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.device_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -214,7 +219,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.swapchain_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -226,7 +233,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.buffer_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -237,7 +246,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.texture_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -248,7 +259,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.texture_view_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -259,7 +272,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.sampler_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -270,7 +285,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.shader_module_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -282,7 +299,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.bind_group_layout_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -293,7 +312,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.bind_group_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -305,7 +326,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.pipeline_layout_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -316,7 +339,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.render_pipeline_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -327,7 +352,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.compute_pipeline_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -338,7 +365,9 @@ impl ResourceManager {
                 .iter()
                 .find(|current_id| {
                     if let Some(id) = id {
-                        if &ResourceId::from(**current_id) == id {return false;}
+                        if &ResourceId::from(**current_id) == id {
+                            return false;
+                        }
                     }
                     self.command_buffer_descriptor_ref(current_id).unwrap() == descriptor
                 })
@@ -357,25 +386,24 @@ impl ResourceManager {
         let handle = handle.into();
         let damaged = handle.is_none();
 
-        if let Some(id) = self.search_compatible(None,&descriptor){
-            self.inner.add_entity_owner(&id.into(), task);
-            Ok(id)
-        }
-        else {
-            let resource = Resource::new(vec![task], descriptor.clone(), handle);
-            match self.inner.add_entity(resource) {
-                Ok(id) => {
-                    if damaged {
-                        self.inner.damage_entity(id);
-                    }
-                    let id = self.add_inner(&descriptor,id);
-                    Ok(id)
-                }
-                Err(_err) => Err(()),
+        if descriptor.state_type() == StateType::Stateless {
+            if let Some(id) = self.search_compatible(None, &descriptor) {
+                self.inner.add_entity_owner(&id.into(), task);
+                return Ok(id);
             }
         }
 
-
+        let resource = Resource::new(vec![task], descriptor.clone(), handle);
+        match self.inner.add_entity(resource) {
+            Ok(id) => {
+                if damaged {
+                    self.inner.damage_entity(id);
+                }
+                let id = self.add_inner(&descriptor, id);
+                Ok(id)
+            }
+            Err(_err) => Err(()),
+        }
     }
     pub fn add_resource_descriptor(
         &mut self,
@@ -387,45 +415,29 @@ impl ResourceManager {
 
     pub fn update_resource_descriptor<'a>(
         &mut self,
+        task: &TaskId,
         id: impl Into<ResourceIdMut<'a>>,
         descriptor: impl Into<ResourceDescriptor>,
     ) -> bool {
         let mut id = id.into();
         let descriptor = descriptor.into();
 
-        if let Some(compatible_id) = self.search_compatible(Some(&(&id).into()),&descriptor) {
-            *id = compatible_id.into();
-            true
+        if descriptor.state_type() == StateType::Stateless {
+            if let Some(compatible_id) = self.search_compatible(Some(&(&id).into()), &descriptor) {
+                //TODO Check if actually works
+                self.inner.remove_entity_owner(&id.clone().into(), task);
+                self.inner
+                    .add_entity_owner(&compatible_id.clone().into(), task.clone());
+                *id = compatible_id.into();
+                return true;
+            }
         }
-        else{
-            self.inner
-                .update_entity_descriptor(&id.into(), |entity_descriptor| {
-                    *entity_descriptor = descriptor;
-                })
-                .is_some()
-        }
+        self.inner
+            .update_entity_descriptor(&id.into(), |entity_descriptor| {
+                *entity_descriptor = descriptor;
+            })
+            .is_some()
     }
-    /*
-    pub fn update_resource_descriptor_mut<'a,T>(
-        &mut self,
-        id: impl Into<ResourceIdMut<'a>>,
-        callback: impl FnOnce(&mut ResourceDescriptor)->T,
-    ) -> Option<T> {
-        let id = id.into();
-        let mut current_descriptor = self.inner.entity_descriptor_ref(&id.into()).map(|descriptor|).clone();
-
-        self.inner.update_entity_descriptor(id, |resource_descriptor|{
-            let mut cloned = resource_descriptor.clone();
-            let result = callback(&mut cloned);
-
-
-            self.instances = HashSet::new();
-            //self.search_compatible(&cloned);
-
-            *resource_descriptor = cloned;
-            result
-        })
-    }*/
 
     pub(crate) fn update_resource_handle(
         &mut self,
@@ -435,11 +447,17 @@ impl ResourceManager {
         self.inner.update_entity_handle(id, Some(resource))
     }
 
-    pub fn remove_resource(&mut self, id: &ResourceId) -> Result<(), ()> {
-        self.inner.remove_entity(&id.clone().into()).map(|v|{
-            self.remove_inner(id);
-            v
-        })
+    pub fn remove_resource(&mut self, task: &TaskId, id: &ResourceId) -> Result<(), ()> {
+        let owners_count = self.inner.remove_entity_owner(&id.clone().into(), task);
+
+        match owners_count {
+            Some(0) => self.inner.remove_entity(&id.clone().into()).map(|v| {
+                self.remove_inner(id);
+                v
+            }),
+            Some(_) => Ok(()),
+            None => Err(()),
+        }
     }
 
     pub(crate) fn resource_descriptor(&self, id: &ResourceId) -> Option<&ResourceDescriptor> {
@@ -465,7 +483,7 @@ impl ResourceManager {
         }
     }
 
-    fn add_inner(&mut self,descriptor: &ResourceDescriptor,id: EntityId)->ResourceId{
+    fn add_inner(&mut self, descriptor: &ResourceDescriptor, id: EntityId) -> ResourceId {
         match descriptor {
             ResourceDescriptor::Instance(_) => {
                 let id = InstanceId::new(id);
@@ -543,8 +561,7 @@ impl ResourceManager {
         }
     }
 
-
-    fn remove_inner(&mut self,id: &ResourceId){
+    fn remove_inner(&mut self, id: &ResourceId) {
         match id {
             ResourceId::Instance(id) => {
                 self.instances.remove(&id);
@@ -610,6 +627,7 @@ impl ResourceManager {
     make_resource_functions!(CommandBuffer);
 
     pub(crate) fn commit_resources(&mut self) -> bool {
+        log::info!(target: "Engine","Committing resources updates");
         self.print_graphviz();
 
         let mut entity_path = Vec::new();
@@ -635,9 +653,12 @@ impl ResourceManager {
     }
 
     #[cfg(multithreading)]
-    pub(crate) fn commit_resources_mt(&mut self,entity_path: impl IntoIterator<Item=(EntityId,Vec<EntityId>)>) -> bool {
-        use tokio::sync::RwLock;
+    pub(crate) fn commit_resources_mt(
+        &mut self,
+        entity_path: impl IntoIterator<Item = (EntityId, Vec<EntityId>)>,
+    ) -> bool {
         use std::collections::HashMap;
+        use tokio::sync::RwLock;
 
         let mut syncs = HashMap::new();
         tokio_scoped::scoped(&self.tokio.clone()).scope(|scope|{
@@ -704,21 +725,21 @@ impl ResourceManager {
         true
     }
 
-
     #[cfg(not(multithreading))]
-    pub(crate) fn commit_resources_st(&mut self, entity_path: impl IntoIterator<Item=(EntityId,Vec<EntityId>)>) -> bool {
-        for (entity,_dependencies) in entity_path {
+    pub(crate) fn commit_resources_st(
+        &mut self,
+        entity_path: impl IntoIterator<Item = (EntityId, Vec<EntityId>)>,
+    ) -> bool {
+        for (entity, _dependencies) in entity_path {
             /*Execute task start*/
             log::info!(target: "EntityManager","Updating {}",entity);
             let builder = {
                 match self.entity_descriptor_ref(&entity) {
-                    Some(descriptor)=>{
-                        match ResourceBuilder::new(&self,entity,descriptor){
-                            Ok(builder)=>Some(builder),
-                            Err(_)=>None
-                        }
+                    Some(descriptor) => match ResourceBuilder::new(&self, entity, descriptor) {
+                        Ok(builder) => Some(builder),
+                        Err(_) => None,
                     },
-                    _=>None
+                    _ => None,
                 }
             };
 
@@ -726,17 +747,15 @@ impl ResourceManager {
                 let entity_handle = builder.build();
 
                 {
-                    self.update_resource_handle(&entity,entity_handle);
+                    self.update_resource_handle(&entity, entity_handle);
                     log::info!(target: "EntityManager","{} updated",entity);
                 }
 
                 /*Execute task stop*/
-            }
-            else{
+            } else {
                 /*Execute task stop*/
                 log::error!(target: "EntityManager","{} failed to update",entity);
             }
-
         }
 
         true

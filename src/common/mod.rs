@@ -15,6 +15,7 @@ macro_rules! make_id {
         paste::paste! {
             $(
                 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+                #[doc = "Id of [" [<$name:camel Handle>] "][crate::common::" [<$name:camel Handle>]  "]."]
                 pub struct [<$name:camel Id>](EntityId);
                 impl [<$name:camel Id>] {
                     pub(crate) fn new(entity_id: EntityId) -> Self {

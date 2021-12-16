@@ -28,17 +28,25 @@ impl super::WGpuEngine {
         )
     }
 
+    pub fn task_handle_cast_mut<T: TaskTrait, K>(
+        &mut self,
+        id: &TaskId,
+        callback: impl FnOnce(&mut T) -> K,
+    ) -> Option<K> {
+        self.task_manager.task_handle_cast_mut(id, callback)
+    }
+
     //pub fn dispatch_tasks<'a, K: 'a + task::TaskTrait, T: IntoIterator<Item = &'a mut K ,IntoIter = impl Iterator<Item=&'a mut K>+Clone>>(&mut self,tasks: T)
+    /**
+    Dispatch all the tasks and elaborate all the pending operations.
+    */
     pub fn dispatch_tasks(&mut self) {
         log::info!(target: "Engine","Dispatching tasks");
-        log::info!(target: "Engine","Updating tasks");
+
         let mut batch = Batch::new(&mut self.resource_manager);
         self.task_manager.commit_tasks(&mut batch);
 
-        log::info!(target: "Engine","Committing resource update");
         batch.resource_manager_mut().commit_resources();
-
-        log::info!(target: "Engine","Submitting batches");
         batch.submit();
 
         log::info!(target: "Engine","Dispatch completed\n");
@@ -54,7 +62,7 @@ pub fn create_task<
     tokio: &tokio::runtime::Handle,
     name: String,
     dependencies: Vec<TaskId>,
-    features_and_limits: impl Into<(crate::wgpu::Features, crate::wgpu::Limits)>,
+    _features_and_limits: impl Into<(crate::wgpu::Features, crate::wgpu::Limits)>,
     callback: C,
 ) -> Option<TaskId> {
     let descriptor = TaskDescriptor::new(name, dependencies);

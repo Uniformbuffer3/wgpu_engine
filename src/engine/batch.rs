@@ -74,6 +74,7 @@ impl<'a> Batch<'a> {
     }
 
     pub fn submit(mut self) {
+        log::info!(target: "Engine","Submitting batches");
         for (device_id, batch) in self.batches {
             batch.submit(&mut self.resource_manager, &device_id)
         }
@@ -83,7 +84,7 @@ impl<'a> Batch<'a> {
 #[derive(Debug, Default)]
 pub struct DeviceBatch {
     resource_writes: Vec<ResourceWrite>,
-    swapchains_to_clear: Vec<SwapchainId>,
+    swapchains_to_clear: Vec<(SwapchainId, Option<TextureViewId>)>,
     command_buffers_to_dispatch: Vec<CommandBufferId>,
 }
 impl DeviceBatch {
@@ -93,7 +94,7 @@ impl DeviceBatch {
     pub fn add_resource_writes(&mut self, mut resource_writes: Vec<ResourceWrite>) {
         self.resource_writes.append(&mut resource_writes);
     }
-    pub fn add_swapchain(&mut self, swapchain: SwapchainId) {
+    pub fn add_swapchain(&mut self, swapchain: (SwapchainId, Option<TextureViewId>)) {
         self.swapchains_to_clear.push(swapchain);
     }
     pub fn add_command_buffer(&mut self, command_buffer: CommandBufferId) {
@@ -105,7 +106,6 @@ impl DeviceBatch {
     }
 
     pub fn submit(self, resource_manager: &mut ResourceManager, device_id: &DeviceId) {
-        log::info!(target: "Engine","Submitting batch: {:#?}",self);
         let device = match resource_manager.device_handle_ref(device_id) {
             Some(device) => device.clone(),
             None => {
@@ -120,9 +120,9 @@ impl DeviceBatch {
             .for_each(|resource_write| resource_write.record(&resource_manager, queue));
 
         let mut command_buffers = Vec::new();
-        self.swapchains_to_clear.iter().for_each(|id| match resource_manager.swapchain_handle_ref(id) {
+        self.swapchains_to_clear.iter().for_each(|(swapchain_id,depth_stencil_id)| match resource_manager.swapchain_handle_ref(swapchain_id) {
                 Some(swapchain) => {
-                    log::error!(target: "Engine","Preparing clear command buffer for {} ",id);
+                    log::info!(target: "Engine","Preparing clear command buffer for {} ",swapchain_id);
                     let current_frame = swapchain.current_frame();
                     let color_attachments = vec![crate::wgpu::RenderPassColorAttachment {
                         view: &current_frame.as_ref().unwrap().output.view,
@@ -133,10 +133,33 @@ impl DeviceBatch {
                         },
                     }];
 
+                    let depth_stencil = depth_stencil_id.as_ref().map(|id|{
+                        let depth_stencil = resource_manager.texture_view_handle_ref(id);
+                        if depth_stencil.is_none(){log::error!(target: "Engine","Failed to gather depth stencil: {} does not exists. Skipping depth stencil...",id);}
+                        depth_stencil
+                    }).flatten();
+
+                    let depth_stencil_attachment = depth_stencil.map(|depth_stencil|{
+                        crate::wgpu::RenderPassDepthStencilAttachment {
+                            view: depth_stencil.as_ref(),
+                            depth_ops: Some(crate::wgpu::Operations{
+                                load: crate::wgpu::LoadOp::Clear(1.0),
+                                store: true
+                            }),
+                            stencil_ops: None
+                            /*
+                            stencil_ops: Some(crate::wgpu::Operations{
+                                load: crate::wgpu::LoadOp::Clear(0),
+                                store: true
+                            })
+                            */
+                        }
+                    });
+
                     let render_pass_descriptor = crate::wgpu::RenderPassDescriptor {
                         label: None,
                         color_attachments: &color_attachments,
-                        depth_stencil_attachment: None,
+                        depth_stencil_attachment,
                     };
                     let mut encoder = device
                         .1
@@ -147,10 +170,10 @@ impl DeviceBatch {
                     command_buffers.push(encoder.finish());
                 }
                 _=> {
-                    log::error!(target: "Engine","Failed to dispatch Batch: CommandBuffer {} does not exists, skipping",id);
+                    log::error!(target: "Engine","Failed to dispatch Batch: {} does not exists, skipping",swapchain_id);
                 }
             });
-        
+
         self.command_buffers_to_dispatch.into_iter().for_each(|id|{
             match resource_manager.take_command_buffer(&id){
                 Some(command_buffer)=>command_buffers.push(command_buffer),
@@ -161,7 +184,7 @@ impl DeviceBatch {
         });
 
         queue.submit(command_buffers);
-        for swapchain_id in &self.swapchains_to_clear {
+        for (swapchain_id, _) in &self.swapchains_to_clear {
             if let Some(swapchain) = resource_manager.swapchain_handle_ref(swapchain_id) {
                 swapchain.present();
                 //swapchain.prepare_frame();
