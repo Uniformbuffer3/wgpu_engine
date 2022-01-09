@@ -1,3 +1,5 @@
+//! [EntityManager][EntityManager] related structures and enumerations.
+
 use crate::common::*;
 
 pub mod update_context;
@@ -12,6 +14,7 @@ use petgraph::Direction;
 use std::collections::HashSet;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+/// Unique identifier for an entity inside the engine.
 pub struct EntityId(usize);
 impl EntityId {
     pub(crate) fn new(id: usize) -> Self {
@@ -43,11 +46,13 @@ impl AsRef<EntityId> for EntityId {
 }
 
 #[derive(Debug, Clone, Copy)]
+/// Errors related to entity management.
 pub enum EntityManagerError {
     MissingDependencies,
 }
 
 #[derive(Debug)]
+/// Metadata related to a dependency between two entities.
 pub struct Dependency;
 impl std::fmt::Display for Dependency {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -224,6 +229,7 @@ impl<N: HaveDependencies + std::fmt::Display> EntityManager<N> {
     }
 }
 
+/*
 pub struct Iter<'a, N>(Box<dyn Iterator<Item = &'a N>>);
 impl<'a, N: 'a> Iter<'a, N> {
     pub fn new<I: 'static + Iterator<Item = &'a N>>(iter: I) -> Self {
@@ -236,3 +242,4 @@ impl<'a, N> Iterator for Iter<'a, N> {
         self.0.next()
     }
 }
+*/

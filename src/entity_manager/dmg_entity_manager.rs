@@ -1,3 +1,5 @@
+//! [DMGEntityManager][DMGEntityManager] related structures, enumerations and macros.
+
 use crate::common::*;
 use crate::entity_manager::EntityManager;
 

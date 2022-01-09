@@ -1,3 +1,5 @@
+//! Task related structures and enumerations.
+
 use downcast_rs::{impl_downcast, Downcast};
 
 pub mod descriptor;
@@ -19,8 +21,10 @@ pub trait TaskTrait: Downcast + Send + Sync {
 }
 impl_downcast!(TaskTrait);
 
+/// Handle for an object implementing the [TaskTrait][TaskTrait].
 pub type TaskHandle = Box<dyn TaskTrait + 'static>;
 
+/// Task for the engine.
 pub struct Task {
     descriptor: TaskDescriptor,
     handle: Option<TaskHandle>,

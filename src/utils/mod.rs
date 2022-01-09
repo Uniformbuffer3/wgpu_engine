@@ -1,3 +1,5 @@
+//! Utility functions and structures.
+
 pub mod buffer_manager;
 pub use buffer_manager::*;
 
@@ -8,6 +10,7 @@ use crate::UpdateContext;
 use crate::WGpuEngine;
 use pal::definitions::*;
 
+/// Allow to quickly initialize the engine and the event loop to run a single task.
 pub fn quick_run<T: TaskTrait, C: Fn(TaskId, &tokio::runtime::Handle, &mut UpdateContext) -> T>(
     surface_count: usize,
     features: crate::wgpu::Features,
@@ -20,7 +23,7 @@ pub fn quick_run<T: TaskTrait, C: Fn(TaskId, &tokio::runtime::Handle, &mut Updat
 
     let mut platform = pal::Platform::new(vec![Box::new(wgpu_engine.wgpu_context())]);
     (0..surface_count).for_each(|_| {
-        platform.request(vec![Request::Surface {
+        platform.requests(vec![Request::Surface {
             request: SurfaceRequest::Create(None),
         }]);
     });

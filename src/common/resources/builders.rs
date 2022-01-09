@@ -1,3 +1,5 @@
+//! Builder helpers used to create resources.
+
 use crate::common::*;
 use crate::engine::resource_manager::ResourceManager;
 use std::borrow::Cow::Borrowed;
@@ -158,6 +160,7 @@ impl ResourceBuilder {
 }
 
 #[derive(Debug)]
+/// Builder for an [Instance][crate::wgpu::Instance] object.
 pub struct InstanceBuilder {
     pub id: InstanceId,
     pub label: String,
@@ -180,6 +183,7 @@ impl InstanceBuilder {
 }
 
 #[derive(Debug)]
+/// Builder for a [Device][crate::wgpu::Device] object.
 pub struct DeviceBuilder {
     pub id: DeviceId,
     pub label: String,
@@ -241,6 +245,7 @@ impl DeviceBuilder {
     }
 }
 
+/// Builder for a [Swapchain][Swapchain] object.
 pub struct SwapchainBuilder {
     pub id: SwapchainId,
     pub label: String,
@@ -284,6 +289,7 @@ impl SwapchainBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [Buffer][crate::wgpu::Buffer] object.
 pub struct BufferBuilder {
     pub id: BufferId,
     pub device: DeviceHandle,
@@ -330,6 +336,7 @@ impl BufferBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [Texture][crate::wgpu::Texture] object.
 pub struct TextureBuilder {
     pub id: TextureId,
     pub device: DeviceHandle,
@@ -457,6 +464,7 @@ impl TextureBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [TextureView][crate::wgpu::TextureView] object.
 pub struct TextureViewBuilder {
     pub label: String,
     pub texture: TextureHandle,
@@ -520,6 +528,7 @@ impl TextureViewBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [Sampler][crate::wgpu::Sampler] object.
 pub struct SamplerBuilder {
     pub id: SamplerId,
     pub device: DeviceHandle,
@@ -600,6 +609,7 @@ impl SamplerBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [ShaderModule][crate::wgpu::ShaderModule] object.
 pub struct ShaderModuleBuilder {
     pub id: ShaderModuleId,
     pub device: DeviceHandle,
@@ -651,6 +661,7 @@ impl ShaderModuleBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [BindGroupLayout][crate::wgpu::BindGroupLayout] object.
 pub struct BindGroupLayoutBuilder {
     pub id: BindGroupLayoutId,
     pub device: DeviceHandle,
@@ -691,6 +702,7 @@ impl BindGroupLayoutBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [BufferBinding][crate::wgpu::BufferBinding] object.
 pub struct BufferBindingBuilder {
     pub buffer: BufferHandle,
     pub offset: crate::wgpu::BufferAddress,
@@ -727,6 +739,7 @@ impl BufferBindingBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [BindingResource][crate::wgpu::BindingResource] object.
 pub enum BindingResourceBuilder {
     Buffer(BufferBindingBuilder),
     BufferArray(Vec<BufferBindingBuilder>),
@@ -837,6 +850,7 @@ impl BindingResourceBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [BindGroupEntry][crate::wgpu::BindGroupEntry] object.
 pub struct BindGroupEntryBuilder {
     pub binding: u32,
     pub resource: BindingResourceBuilder,
@@ -871,6 +885,7 @@ impl BindGroupEntryBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [BindGroup][crate::wgpu::BindGroup] object.
 pub struct BindGroupBuilder {
     pub id: BindGroupId,
     pub device: DeviceHandle,
@@ -949,6 +964,7 @@ impl BindGroupBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [PipelineLayout][crate::wgpu::PipelineLayout] object.
 pub struct PipelineLayoutBuilder {
     pub id: PipelineLayoutId,
     pub device: DeviceHandle,
@@ -1008,6 +1024,7 @@ impl PipelineLayoutBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [VertexBufferLayout][crate::wgpu::VertexBufferLayout] object.
 pub struct VertexBufferLayoutBuilder {
     pub array_stride: crate::wgpu::BufferAddress,
     pub step_mode: crate::wgpu::InputStepMode,
@@ -1035,6 +1052,7 @@ impl VertexBufferLayoutBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [VertexState][crate::wgpu::VertexState] object.
 pub struct VertexStateBuilder {
     pub module: ShaderModuleHandle,
     pub entry_point: String,
@@ -1083,6 +1101,7 @@ impl VertexStateBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [FragmentState][crate::wgpu::FragmentState] object.
 pub struct FragmentStateBuilder {
     pub module: ShaderModuleHandle,
     pub entry_point: String,
@@ -1121,6 +1140,7 @@ impl FragmentStateBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [RenderPipeline][crate::wgpu::RenderPipeline] object.
 pub struct RenderPipelineBuilder {
     pub id: RenderPipelineId,
     pub device: DeviceHandle,
@@ -1261,6 +1281,7 @@ impl RenderPipelineBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [ComputePipeline][crate::wgpu::ComputePipeline] object.
 pub struct ComputePipelineBuilder {
     pub id: ComputePipelineId,
     pub device: DeviceHandle,
@@ -1330,6 +1351,8 @@ impl ComputePipelineBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for commands to be written in a [ComputePass][crate::wgpu::ComputePass] object.
+/// Never used nor implemented, so it will panic if used.
 pub enum ComputeCommandBuilder {}
 impl ComputeCommandBuilder {
     pub fn new(
@@ -1344,6 +1367,7 @@ impl ComputeCommandBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for commands to be written in a [RenderPass][crate::wgpu::RenderPass] object.
 pub enum RenderCommandBuilder {
     SetPipeline {
         pipeline: RenderPipelineHandle,
@@ -1533,6 +1557,7 @@ impl RenderCommandBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [TextureToBufferCopy][TextureToBufferCopy] command to be written in a [CommandEncoder][crate::wgpu::CommandEncoder] object.
 pub struct TextureToBufferCopyBuilder {
     pub src_texture: TextureHandle,
     pub src_mip_level: u32,
@@ -1592,6 +1617,7 @@ impl TextureToBufferCopyBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [TextureToTextureCopy][TextureToTextureCopy] command to be written in a [CommandEncoder][crate::wgpu::CommandEncoder] object.
 pub struct TextureToTextureCopyBuilder {
     pub src_texture: TextureHandle,
     pub src_mip_level: u32,
@@ -1655,6 +1681,7 @@ impl TextureToTextureCopyBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [BufferToTextureCopy][BufferToTextureCopy] command to be written in a [CommandEncoder][crate::wgpu::CommandEncoder] object.
 pub struct BufferToTextureCopyBuilder {
     pub src_buffer: BufferHandle,
     pub src_layout: crate::wgpu::ImageDataLayout,
@@ -1714,6 +1741,7 @@ impl BufferToTextureCopyBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [BufferToBufferCopy][BufferToBufferCopy] command to be written in a [CommandEncoder][crate::wgpu::CommandEncoder] object.
 pub struct BufferToBufferCopyBuilder {
     pub src_buffer: BufferHandle,
     pub src_offset: crate::wgpu::BufferAddress,
@@ -1801,6 +1829,7 @@ impl ColorViewBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [RenderPassColorAttachment][crate::wgpu::RenderPassColorAttachment] object.
 pub struct RenderPassColorAttachmentBuilder {
     pub view: ColorViewBuilder,
     pub resolve_target: Option<TextureViewHandle>,
@@ -1857,46 +1886,6 @@ impl RenderPassColorAttachmentBuilder {
     }
 }
 
-/*
-#[derive(Debug)]
-pub enum ColorViewPreBuilder<'a> {
-    TextureView(TextureViewHandle),
-    Swapchain(MutexGuard<'a,Option<crate::wgpu::SwapChainFrame>>)
-}
-
-#[derive(Debug)]
-pub struct RenderPassColorAttachmentPreBuilder<'a> {
-    pub view: ColorViewPreBuilder<'a>,
-    pub resolve_target: Option<TextureViewHandle>,
-    pub ops: crate::wgpu::Operations<crate::wgpu::Color>,
-}
-impl<'a> RenderPassColorAttachmentPreBuilder<'a> {
-    pub fn new(descriptor: RenderPassColorAttachmentBuilder)-> Self {
-        let view = match descriptor.view {
-            ColorViewBuilder::TextureView(texture_view)=>ColorViewPreBuilder::TextureView(texture_view),
-            ColorViewBuilder::Swapchain(swapchain)=>ColorViewPreBuilder::Swapchain(swapchain.current_frame())
-        };
-        Self {
-            view,
-            resolve_target: descriptor.resolve_target.clone(),
-            ops: descriptor.ops.clone()
-        }
-    }
-    pub fn build(&self) -> crate::wgpu::RenderPassColorAttachment {
-        let view = match &self.view {
-            ColorViewPreBuilder::TextureView(view)=>view.as_ref(),
-            ColorViewPreBuilder::Swapchain(swapchain)=>&swapchain.as_ref().unwrap().output.view
-        };
-
-        crate::wgpu::RenderPassColorAttachment {
-            view,
-            resolve_target: self.resolve_target.as_ref().map(|texture_view|texture_view.as_ref()),
-            ops: self.ops.clone()
-        }
-    }
-}
-*/
-
 #[derive(Debug, Clone)]
 pub enum ColorTargetBuilder {
     Swapchain(SwapchainHandle),
@@ -1928,61 +1917,11 @@ impl ColorTargetBuilder {
             }
         }
     }
-    /*
-    pub fn as_attachment(&self)->crate::wgpu::RenderPassColorAttachment {
-        let texture_view = match self {
-            Self::Swapchain(swapchain)=>swapchain.current_frame().as_ref().unwrap().output.view,
-            Self::TextureView(texture_view)=>texture_view.as_ref()
-        };
-        crate::wgpu::RenderPassColorAttachment{
-            view: texture_view,
-            resolve_target: None,
-            ops: crate::wgpu::Operations {
-                load: crate::wgpu::LoadOp::Load,
-                store: true,
-            },
-        }
-    }*/
 }
 
-/*
-if color_targets.is_none() {
-    let current_color_targets = if let RenderCommand::SetPipeline { pipeline } =
-        command
-    {
-        match resource_manager.render_pipeline_descriptor_ref(&pipeline) {
-            Some(descriptor) => match &descriptor.fragment {
-                Some(fragment) => {
-                    let result: Result<_, _> = fragment
-                        .targets
-                        .iter()
-                        .map(|target_state| {
-                            ColorTargetBuilder::new(
-                                resource_manager,
-                                &target_state.target,
-                            )
-                        })
-                        .collect();
-                    match result {
-                        Ok(color_targets) => color_targets,
-                        Err(err) => return Err(err),
-                    }
-                }
-                None => Vec::new(),
-            },
-            None => {
-                log::error!(target: "EntityManager","Failed to gather Command::RenderPass resources: RenderPipeline {} not found",pipeline);
-                return Err(ResourceBuilderError::MissingDependencies);
-            }
-        }
-    } else {
-        Vec::new()
-    };
-    color_targets = Some(current_color_targets);
-}
-*/
 
 #[derive(Debug, Clone)]
+/// Builder for a command to be written into the [CommandEncoder][crate::wgpu::CommandEncoder] object.
 pub enum CommandBuilder {
     BufferToBuffer(BufferToBufferCopyBuilder),
     BufferToTexture(BufferToTextureCopyBuilder),
@@ -2178,6 +2117,7 @@ impl CommandBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [CommandBuffer][crate::wgpu::CommandBuffer] object.
 pub struct CommandBufferBuilder {
     pub id: CommandBufferId,
     pub device: DeviceHandle,

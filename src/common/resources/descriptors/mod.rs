@@ -1,3 +1,5 @@
+//! Descriptors for the resources.
+
 use crate::common::*;
 use crate::engine::resource_manager::ResourceManager;
 
@@ -60,32 +62,46 @@ pub enum StateType {
     Statefull,
 }
 
+/// The implementor object have owers.
 pub trait HaveOwners {
     type O: Clone + PartialEq;
+    /// Returns the owner of the object.
     fn owners(&self) -> Vec<Self::O>;
+    /// Returns a reference of the owner of the object.
     fn owners_ref(&self) -> &Vec<Self::O>;
+    /// Returns a mutable reference of the owner of the object.
     fn owners_mut(&mut self) -> &mut Vec<Self::O>;
 }
 
+/// The implementor object have dependencies.
 pub trait HaveDependencies {
+    /// Returns the dependencies of the object.
     fn dependencies(&self) -> Vec<EntityId>;
 }
 
+/// The implementor object have a descriptor.
 pub trait HaveDescriptor: HaveDependencies {
     type D: Clone + PartialEq;
+    /// Returns the descriptor of the object.
     fn descriptor(&self) -> Self::D;
+    /// Returns a reference of the descriptor of the object.
     fn descriptor_ref(&self) -> &Self::D;
+    /// Returns a mutable reference of the descriptor of the object.
     fn descriptor_mut(&mut self) -> &mut Self::D;
+    /// Returns the state type of the object.
     fn state_type(&self) -> StateType;
+    /// Returns true if object needs to be updated.
     fn needs_update(&self, other: &Self::D) -> bool;
 }
 
+/// The implementor object have an handle.
 pub trait HaveHandle {
     type H;
     fn handle_ref(&self) -> &Self::H;
     fn handle_mut(&mut self) -> &mut Self::H;
 }
 
+/// The implementor object have a descriptor and an handle.
 pub trait HaveDescriptorAndHandle: HaveDescriptor + HaveHandle {}
 
 #[derive(Debug, Clone, PartialEq)]

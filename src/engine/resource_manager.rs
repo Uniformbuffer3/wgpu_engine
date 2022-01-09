@@ -1,3 +1,5 @@
+//! [ResourceManager][ResourceManager] related structures, enumerations and macros.
+
 use crate::common::*;
 use crate::entity_manager::DMGEntityManager;
 
@@ -78,6 +80,10 @@ macro_rules! make_resource_functions {
 }
 
 #[derive(Debug)]
+/**
+The resource manager is a specialized version of the DMGEntityManager and a major subsystem of WGpuEngine.
+It is responsible to handle the creation, destuction and manipulation of rendering resources requested by the tasks.
+*/
 pub struct ResourceManager {
     tokio: tokio::runtime::Handle,
     inner: DMGEntityManager<Resource>,
@@ -145,6 +151,9 @@ impl ResourceManager {
         }
     }
 
+    /**
+    Get the parent device that have created the passed entity id.
+    */
     pub fn entity_device(&self, id: &EntityId) -> Option<&DeviceHandle> {
         let parents = self.inner.entity_parents(id);
         match parents.get(0) {
@@ -159,6 +168,9 @@ impl ResourceManager {
         }
     }
 
+    /**
+    Get the parent device id that have created the passed entity id.
+    */
     pub fn entity_device_id(&self, id: impl AsRef<EntityId>) -> Option<DeviceId> {
         let parents = self.inner.entity_parents(id.as_ref());
         match parents.get(0) {
@@ -174,10 +186,16 @@ impl ResourceManager {
         }
     }
 
+    /**
+    Take the resource handle of the passed entity id.
+    */
     fn take_resource(&mut self, id: &EntityId) -> Option<ResourceHandle> {
         self.inner.take_entity_handle(id)
     }
 
+    /**
+    Search compatible resource id of the passed resource descriptor.
+    */
     fn search_compatible(
         &self,
         id: Option<&ResourceId>,
@@ -376,6 +394,9 @@ impl ResourceManager {
         }
     }
 
+    /**
+    Add a new resource to the manager. The descriptor is required, while the handle is optional.
+    */
     pub fn add_resource(
         &mut self,
         task: TaskId,
@@ -405,6 +426,10 @@ impl ResourceManager {
             Err(_err) => Err(()),
         }
     }
+
+    /**
+    Add a new resource to the manager.
+    */
     pub fn add_resource_descriptor(
         &mut self,
         task: TaskId,
@@ -413,6 +438,9 @@ impl ResourceManager {
         self.add_resource(task, descriptor, None)
     }
 
+    /**
+    Update the descriptor of a resource.
+    */
     pub fn update_resource_descriptor<'a>(
         &mut self,
         task: &TaskId,
@@ -424,7 +452,6 @@ impl ResourceManager {
 
         if descriptor.state_type() == StateType::Stateless {
             if let Some(compatible_id) = self.search_compatible(Some(&(&id).into()), &descriptor) {
-                //TODO Check if actually works
                 self.inner.remove_entity_owner(&id.clone().into(), task);
                 self.inner
                     .add_entity_owner(&compatible_id.clone().into(), task.clone());
@@ -439,6 +466,9 @@ impl ResourceManager {
             .is_some()
     }
 
+    /**
+    Update the handle of a resource.
+    */
     pub(crate) fn update_resource_handle(
         &mut self,
         id: &EntityId,
@@ -447,6 +477,9 @@ impl ResourceManager {
         self.inner.update_entity_handle(id, Some(resource))
     }
 
+    /**
+    Remove a resource from the manager.
+    */
     pub fn remove_resource(&mut self, task: &TaskId, id: &ResourceId) -> Result<(), ()> {
         let owners_count = self.inner.remove_entity_owner(&id.clone().into(), task);
 
@@ -460,10 +493,16 @@ impl ResourceManager {
         }
     }
 
+    /**
+    Get the descriptor of the resource corrisponding to the resource id.
+    */
     pub(crate) fn resource_descriptor(&self, id: &ResourceId) -> Option<&ResourceDescriptor> {
         self.inner.entity_descriptor_ref(&id.clone().into())
     }
 
+    /**
+    Take a command buffer from the manager.
+    */
     pub(crate) fn take_command_buffer(
         &mut self,
         id: &CommandBufferId,
@@ -626,6 +665,9 @@ impl ResourceManager {
     make_resource_functions!(ComputePipeline);
     make_resource_functions!(CommandBuffer);
 
+    /**
+    Commit the update of the pending resources.
+    */
     pub(crate) fn commit_resources(&mut self) -> bool {
         log::info!(target: "Engine","Committing resources updates");
         self.print_graphviz();
@@ -653,6 +695,9 @@ impl ResourceManager {
     }
 
     #[cfg(multithreading)]
+    /**
+    Multithreading resource update.
+    */
     pub(crate) fn commit_resources_mt(
         &mut self,
         entity_path: impl IntoIterator<Item = (EntityId, Vec<EntityId>)>,
@@ -726,6 +771,9 @@ impl ResourceManager {
     }
 
     #[cfg(not(multithreading))]
+    /**
+    Single threaded resource update.
+    */
     pub(crate) fn commit_resources_st(
         &mut self,
         entity_path: impl IntoIterator<Item = (EntityId, Vec<EntityId>)>,

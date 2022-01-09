@@ -1,3 +1,5 @@
+//! CommandBuffer related structures and enumerations.
+
 use crate::common::resources::descriptors::{HaveDependencies, HaveDescriptor, StateType};
 use crate::entity_manager::EntityId;
 use crate::resources::{
@@ -126,6 +128,8 @@ impl HaveDependencies for Command {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// View of the object where colors are going to be written.
+/// Required for the [RenderPassColorAttachment][RenderPassColorAttachment] object.
 pub enum ColorView {
     TextureView(TextureViewId),
     Swapchain(SwapchainId),
@@ -148,6 +152,7 @@ impl HaveDependencies for ColorView {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Parameters for a render pass attachment of a [Command::RenderPass][Command] object.
 pub struct RenderPassColorAttachment {
     pub view: ColorView,
     pub resolve_target: Option<TextureViewId>,
@@ -288,6 +293,7 @@ impl HaveDependencies for RenderCommand {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Buffer to buffer copy command.
 pub struct BufferToBufferCopy {
     pub src_buffer: BufferId,
     pub src_offset: crate::wgpu::BufferAddress,
@@ -305,6 +311,7 @@ impl HaveDependencies for BufferToBufferCopy {
 }
 
 #[derive(Debug, Clone)]
+/// Buffer to Texture copy command.
 pub struct BufferToTextureCopy {
     pub src_buffer: BufferId,
     pub src_layout: crate::wgpu::ImageDataLayout,
@@ -352,6 +359,7 @@ impl HaveDependencies for BufferToTextureCopy {
 }
 
 #[derive(Debug, Clone)]
+/// Texture to buffer copy command.
 pub struct TextureToBufferCopy {
     pub src_texture: TextureId,
     pub src_mip_level: u32,
@@ -399,6 +407,7 @@ impl HaveDependencies for TextureToBufferCopy {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Texture to texture copy command.
 pub struct TextureToTextureCopy {
     pub src_texture: TextureId,
     pub src_mip_level: u32,
@@ -418,6 +427,7 @@ impl HaveDependencies for TextureToTextureCopy {
 }
 
 #[derive(Clone, PartialEq)]
+/// Host to buffer copy command.
 pub struct BufferWrite {
     pub buffer: BufferId,
     pub offset: crate::wgpu::BufferAddress,
@@ -434,6 +444,7 @@ impl std::fmt::Debug for BufferWrite {
 }
 
 #[derive(Clone)]
+/// Host to texture copy command.
 pub struct TextureWrite {
     pub texture: TextureId,
     pub mip_level: u32,

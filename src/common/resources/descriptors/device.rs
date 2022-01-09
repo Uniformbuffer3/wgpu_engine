@@ -1,3 +1,5 @@
+//! Device related structures and enumerations.
+
 use crate::common::resources::descriptors::{HaveDependencies, HaveDescriptor, StateType};
 use crate::entity_manager::EntityId;
 use crate::resources::InstanceId;

@@ -1,3 +1,5 @@
+//! Common structures and enumerations needed for the whole library.
+
 pub mod resources;
 pub use resources::*;
 
@@ -48,6 +50,7 @@ macro_rules! make_id {
 
 pub(crate) use make_id;
 
+/// Offset of a 2D element.
 pub struct Offset2D {
     pub x: u32,
     pub y: u32,
@@ -62,6 +65,7 @@ impl From<(u32, u32)> for Offset2D {
     }
 }
 
+/// Extension of a 2D element.
 pub struct Extent2D {
     pub width: u32,
     pub height: u32,
@@ -76,6 +80,7 @@ impl From<(u32, u32)> for Extent2D {
     }
 }
 
+/// Area of a 2D element.
 pub struct Area2D {
     pub offset: Offset2D,
     pub extent: Extent2D,

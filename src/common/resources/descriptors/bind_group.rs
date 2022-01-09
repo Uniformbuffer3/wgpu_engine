@@ -1,8 +1,11 @@
+//! Bind group related structures and enumerations.
+
 use crate::common::resources::descriptors::{HaveDependencies, HaveDescriptor, StateType};
 use crate::entity_manager::EntityId;
 use crate::resources::{BindGroupLayoutId, BufferId, DeviceId, SamplerId, TextureViewId};
 
 #[derive(Debug, Clone, PartialEq)]
+/// Buffer binding for the [BindingResource][BindingResource] object.
 pub struct BufferBinding {
     pub buffer: BufferId, //Arc<crate::wgpu::Buffer>
     pub offset: crate::wgpu::BufferAddress,
@@ -33,6 +36,7 @@ impl HaveDescriptor for BufferBinding {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Binding resource for the [BindGroupEntry][BindGroupEntry] object.
 pub enum BindingResource {
     Buffer(BufferBinding),
     BufferArray(Vec<BufferBinding>),
@@ -57,6 +61,7 @@ impl HaveDependencies for BindingResource {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Entry for the [BindGroupDescriptor][BindGroupDescriptor]
 pub struct BindGroupEntry {
     pub binding: u32,
     pub resource: BindingResource,

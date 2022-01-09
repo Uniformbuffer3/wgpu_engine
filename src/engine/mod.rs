@@ -66,6 +66,9 @@ impl WGpuEngine {
     }
 
     #[cfg(feature = "pal")]
+    /**
+    Retrieve the WGpuContext to allow the integration with PAL.
+    */
     pub fn wgpu_context(&self) -> pal::definitions::WgpuContext {
         use crate::engine::engine_task::EngineTask;
         let (instance, devices) = self

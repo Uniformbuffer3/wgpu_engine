@@ -1,8 +1,11 @@
+//! RenderPipeline related structures and enumerations.
+
 use crate::common::resources::descriptors::{HaveDependencies, HaveDescriptor, StateType};
 use crate::entity_manager::EntityId;
 use crate::resources::{DeviceId, PipelineLayoutId, ShaderModuleId, SwapchainId, TextureViewId};
 
 #[derive(Debug, Clone, PartialEq)]
+/// Vertex buffer layout for the [VertexState][VertexState] object.
 pub struct VertexBufferLayout {
     pub array_stride: crate::wgpu::BufferAddress,
     pub step_mode: crate::wgpu::InputStepMode,
@@ -10,6 +13,7 @@ pub struct VertexBufferLayout {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Vertex state for the [RenderPipelineDescriptor][RenderPipelineDescriptor] descriptor.
 pub struct VertexState {
     pub module: ShaderModuleId, //Arc<crate::wgpu::ShaderModule>
     pub entry_point: String,
@@ -22,6 +26,7 @@ impl HaveDependencies for VertexState {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Color target for the [ColorTargetState][ColorTargetState] object.
 pub enum ColorTarget {
     Swapchain(SwapchainId),
     TextureView(TextureViewId),
@@ -36,6 +41,7 @@ impl HaveDependencies for ColorTarget {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Color target state for the [FragmentState][FragmentState] object.
 pub struct ColorTargetState {
     pub target: ColorTarget,
     pub blend: Option<crate::wgpu::BlendState>,
@@ -48,6 +54,7 @@ impl HaveDependencies for ColorTargetState {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Fragment state for the [RenderPipelineDescriptor][RenderPipelineDescriptor] descriptor.
 pub struct FragmentState {
     pub module: ShaderModuleId, //Arc<crate::wgpu::ShaderModule>
     pub entry_point: String,
@@ -60,6 +67,7 @@ impl HaveDependencies for FragmentState {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Depth stencil state for the [RenderPipelineDescriptor][RenderPipelineDescriptor] descriptor.
 pub struct DepthStencilState {
     pub id: TextureViewId,
     pub depth_write_enabled: bool,

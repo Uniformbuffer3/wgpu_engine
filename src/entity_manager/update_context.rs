@@ -1,3 +1,5 @@
+//! [UpdateContext][UpdateContext] related structures, enumerations and macros.
+
 use crate::common::*;
 use crate::engine::resource_manager::ResourceManager;
 
@@ -62,6 +64,8 @@ macro_rules! make_update_context_functions {
     };
 }
 
+/// Context that allow a Task to manipulate rendering resources. Commands are not executed immediately,
+/// but stored for later execution.
 pub struct UpdateContext<'a> {
     task: TaskId,
     resource_manager: &'a mut ResourceManager,

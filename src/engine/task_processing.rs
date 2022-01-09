@@ -8,6 +8,9 @@ use crate::{
 };
 
 impl super::WGpuEngine {
+    /**
+    Create a task in the TaskManager.
+    */
     pub fn create_task<
         T: 'static + TaskTrait,
         C: Fn(TaskId, &tokio::runtime::Handle, &mut UpdateContext) -> T,
@@ -28,6 +31,9 @@ impl super::WGpuEngine {
         )
     }
 
+    /**
+    Get and cast the mutable task handle.
+    */
     pub fn task_handle_cast_mut<T: TaskTrait, K>(
         &mut self,
         id: &TaskId,
@@ -36,7 +42,6 @@ impl super::WGpuEngine {
         self.task_manager.task_handle_cast_mut(id, callback)
     }
 
-    //pub fn dispatch_tasks<'a, K: 'a + task::TaskTrait, T: IntoIterator<Item = &'a mut K ,IntoIter = impl Iterator<Item=&'a mut K>+Clone>>(&mut self,tasks: T)
     /**
     Dispatch all the tasks and elaborate all the pending operations.
     */
@@ -53,7 +58,7 @@ impl super::WGpuEngine {
     }
 }
 
-pub fn create_task<
+pub(crate) fn create_task<
     T: 'static + TaskTrait,
     C: Fn(TaskId, &tokio::runtime::Handle, &mut UpdateContext) -> T,
 >(

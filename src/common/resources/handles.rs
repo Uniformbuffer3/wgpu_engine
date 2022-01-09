@@ -1,26 +1,42 @@
+//! Handles for the resources.
+
 use std::convert::TryInto;
 use std::sync::{Arc, Mutex, MutexGuard};
 
+/// Handle for an [Instance][crate::wgpu::Instance].
 pub type InstanceHandle = Arc<crate::wgpu::Instance>;
+/// Handle for an [Adapter][crate::wgpu::Adapter],[Device][crate::wgpu::Device] and [Queue][crate::wgpu::Queue] combination.
 pub type DeviceHandle = Arc<(
     crate::wgpu::Adapter,
     crate::wgpu::Device,
     crate::wgpu::Queue,
 )>;
+/// Handle for a [Swapchain][Swapchain].
 pub type SwapchainHandle = Arc<Swapchain>;
 
+/// Handle for a [Buffer][crate::wgpu::Buffer].
 pub type BufferHandle = Arc<crate::wgpu::Buffer>;
+/// Handle for a [Texture][crate::wgpu::Texture].
 pub type TextureHandle = Arc<crate::wgpu::Texture>;
+/// Handle for a [TextureView][crate::wgpu::TextureView].
 pub type TextureViewHandle = Arc<crate::wgpu::TextureView>;
+/// Handle for a [Sampler][crate::wgpu::Sampler].
 pub type SamplerHandle = Arc<crate::wgpu::Sampler>;
+/// Handle for a [ShaderModule][crate::wgpu::ShaderModule].
 pub type ShaderModuleHandle = Arc<crate::wgpu::ShaderModule>;
 
+/// Handle for a [BindGroupLayout][crate::wgpu::BindGroupLayout].
 pub type BindGroupLayoutHandle = Arc<crate::wgpu::BindGroupLayout>;
+/// Handle for a [BindGroup][crate::wgpu::BindGroup].
 pub type BindGroupHandle = Arc<crate::wgpu::BindGroup>;
 
+/// Handle for a [PipelineLayout][crate::wgpu::PipelineLayout].
 pub type PipelineLayoutHandle = Arc<crate::wgpu::PipelineLayout>;
+/// Handle for a [RenderPipeline][crate::wgpu::RenderPipeline].
 pub type RenderPipelineHandle = Arc<crate::wgpu::RenderPipeline>;
+/// Handle for a [ComputePipeline][crate::wgpu::ComputePipeline].
 pub type ComputePipelineHandle = Arc<crate::wgpu::ComputePipeline>;
+/// Handle for a [CommandBuffer][crate::wgpu::CommandBuffer].
 pub type CommandBufferHandle = Arc<crate::wgpu::CommandBuffer>;
 
 #[derive(Debug, Clone)]
@@ -228,6 +244,7 @@ impl From<Arc<crate::wgpu::CommandBuffer>> for ResourceHandle {
 }
 
 #[derive(Debug, Clone)]
+/// Swapchain for the engine.
 pub struct Swapchain {
     swapchain_descriptor: crate::wgpu::SwapChainDescriptor,
     swapchain: Arc<crate::wgpu::SwapChain>,

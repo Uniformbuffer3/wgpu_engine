@@ -2,6 +2,9 @@ use crate::common::*;
 use crate::engine::resource_manager::ResourceManager;
 use std::collections::HashMap;
 
+/**
+Structure that store the data relative to a batch.
+*/
 pub struct Batch<'a> {
     resource_manager: &'a mut ResourceManager,
     batches: HashMap<DeviceId, DeviceBatch>,
@@ -14,12 +17,23 @@ impl<'a> Batch<'a> {
             batches,
         }
     }
+    /**
+    Get the reference of the underlying resource manager.
+    */
     pub fn resource_manager_ref(&self) -> &ResourceManager {
         &self.resource_manager
     }
+
+    /**
+    Get the mutable reference of the underlying resource manager.
+    */
     pub fn resource_manager_mut(&mut self) -> &mut ResourceManager {
         &mut self.resource_manager
     }
+
+    /**
+    Add a pending resource write operation.
+    */
     pub fn add_resource_write(&mut self, resource_write: ResourceWrite) -> bool {
         let device_id = match resource_write {
             ResourceWrite::Buffer(ref write) => {
@@ -41,6 +55,9 @@ impl<'a> Batch<'a> {
         true
     }
 
+    /**
+    Add multiple pending resource write operations.
+    */
     pub fn add_resource_writes(&mut self, resource_writes: Vec<ResourceWrite>) -> bool {
         for write in resource_writes {
             if !self.add_resource_write(write) {
@@ -50,6 +67,9 @@ impl<'a> Batch<'a> {
         true
     }
 
+    /**
+    Add a pending command buffer to the batch.
+    */
     pub fn add_command_buffer(&mut self, command_buffer: CommandBufferId) -> bool {
         let swapchains = match self
             .resource_manager
@@ -73,6 +93,9 @@ impl<'a> Batch<'a> {
         true
     }
 
+    /**
+    Submit the batch.
+    */
     pub fn submit(mut self) {
         log::info!(target: "Engine","Submitting batches");
         for (device_id, batch) in self.batches {
@@ -82,29 +105,51 @@ impl<'a> Batch<'a> {
 }
 
 #[derive(Debug, Default)]
+/**
+Device specific part of a batch.
+*/
 pub struct DeviceBatch {
     resource_writes: Vec<ResourceWrite>,
     swapchains_to_clear: Vec<(SwapchainId, Option<TextureViewId>)>,
     command_buffers_to_dispatch: Vec<CommandBufferId>,
 }
 impl DeviceBatch {
+    /**
+    Add a pending resource write operation.
+    */
     pub fn add_resource_write(&mut self, resource_write: ResourceWrite) {
         self.resource_writes.push(resource_write);
     }
+    /**
+    Add multiple pending resource write operation.
+    */
     pub fn add_resource_writes(&mut self, mut resource_writes: Vec<ResourceWrite>) {
         self.resource_writes.append(&mut resource_writes);
     }
+
+    /**
+    Add a swapchain to the batch.
+    */
     pub fn add_swapchain(&mut self, swapchain: (SwapchainId, Option<TextureViewId>)) {
         self.swapchains_to_clear.push(swapchain);
     }
+    /**
+    Add a command buffer to the batch.
+    */
     pub fn add_command_buffer(&mut self, command_buffer: CommandBufferId) {
         self.command_buffers_to_dispatch.push(command_buffer);
     }
+    /**
+    Add multiple command buffer to the batch.
+    */
     pub fn add_command_buffers(&mut self, mut command_buffers: Vec<CommandBufferId>) {
         self.command_buffers_to_dispatch
             .append(&mut command_buffers);
     }
 
+    /**
+    Submit the batch.
+    */
     pub fn submit(self, resource_manager: &mut ResourceManager, device_id: &DeviceId) {
         let device = match resource_manager.device_handle_ref(device_id) {
             Some(device) => device.clone(),

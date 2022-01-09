@@ -12,6 +12,7 @@ use std::collections::HashMap;
 use std::marker::PhantomData;
 
 #[derive(Debug)]
+/// Helper structure to suballocate a buffer while keeping the data synchronized.
 pub struct BufferManager<D: bytemuck::Pod + Sized, A> {
     label: String,
     phantom: PhantomData<D>,
@@ -87,25 +88,31 @@ impl<D: bytemuck::Pod + Sized, A: std::fmt::Debug> BufferManager<D, A> {
             support_buffer,
         }
     }
+    /// Id of the underlying buffer.
     pub fn id(&self) -> &BufferId {
         &self.buffer
     }
+    /// Number of buffer suballocations.
     pub fn len(&self) -> usize {
         self.id_map.len()
     }
+    /// Are there any suballocations?
     pub fn is_empty(&self) -> bool {
         self.id_map.is_empty()
     }
+    /// Returns the space occupied by the sum of all suballocations.
     pub fn size(&self) -> usize {
         self.id_map.len() * std::mem::size_of::<D>()
     }
+    /// Returns the maximum number of possible suballocations with the current buffer size.
     pub fn capacity(&self) -> usize {
         self.descriptor.size as usize / std::mem::size_of::<D>()
     }
+    /// Returns the index of the next available suballocation slot.
     pub fn next_slot(&self) -> usize {
         self.len()
     }
-
+    /// Request to allocate a slot.
     pub fn request(&mut self, id: usize, auxiliary_data: A, data: D) {
         let slot_id = self.id_map.len();
         if slot_id < self.capacity() {
@@ -117,6 +124,7 @@ impl<D: bytemuck::Pod + Sized, A: std::fmt::Debug> BufferManager<D, A> {
         }
     }
 
+    /// Relase the allocation of a slot. It is not applied immediately, but on the next [update][BufferManager::update] call.
     pub fn release_pending(&mut self, buffer_index: &usize) -> Option<A> {
         let removed_slot = if let Some((id, _)) = self.id_map.get(buffer_index) {
             *id
@@ -187,12 +195,14 @@ impl<D: bytemuck::Pod + Sized, A: std::fmt::Debug> BufferManager<D, A> {
         }
     }
 
+    /// Update the data of a suballocation using a whole struct. It is not applied immediately, but on the next [update][BufferManager::update] call.
     pub fn pending_write_struct(&mut self, buffer_index: &usize, data: D) -> bool {
         self.pending_write(buffer_index, move || {
             (0, bytemuck::bytes_of(&data).to_vec())
         })
     }
 
+    /// Update the data of a suballocation using a single field. It is not applied immediately, but on the next [update][BufferManager::update] call.
     pub fn pending_write_field<U: bytemuck::Pod + Sized>(
         &mut self,
         buffer_index: &usize,
@@ -240,6 +250,7 @@ impl<D: bytemuck::Pod + Sized, A: std::fmt::Debug> BufferManager<D, A> {
         self.need_rebuild = true;
     }
 
+    /// Submit the pending updates. It also returns a list of commands that need to be recorded on a command buffer and submitted.
     pub fn update(&mut self, update_context: &mut UpdateContext) -> Vec<Command> {
         if self.need_rebuild {
             update_context.update_buffer_descriptor(&mut self.buffer, self.descriptor.clone());
@@ -256,17 +267,21 @@ impl<D: bytemuck::Pod + Sized, A: std::fmt::Debug> BufferManager<D, A> {
         self.pending_copies.drain(..).collect()
     }
 
+    /// Get a reference of the associated data of a suballocation.
     pub fn associated_data(&self, buffer_index: &usize) -> Option<&A> {
         self.id_map
             .get(buffer_index)
             .map(|(_, associated_data)| associated_data)
     }
+
+    /// Get a mutable reference of the associated data of a suballocation.
     pub fn associated_data_mut(&mut self, buffer_index: &usize) -> Option<&mut A> {
         self.id_map
             .get_mut(buffer_index)
             .map(|(_, associated_data)| associated_data)
     }
 
+    /// Get the underlying slot index of a suballocation.
     pub fn data_slot(&self, buffer_index: &usize) -> Option<usize> {
         self.id_map.get(buffer_index).map(|(slot, _)| *slot)
     }

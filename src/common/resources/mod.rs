@@ -1,3 +1,5 @@
+//! Resource related structures and enumerations.
+
 pub mod descriptors;
 pub use descriptors::*;
 
