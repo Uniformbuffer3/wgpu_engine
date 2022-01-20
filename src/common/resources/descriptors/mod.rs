@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::engine::resource_manager::ResourceManager;
 
 pub use crate::wgpu::{
-    AddressMode, BindGroupLayoutEntry, CompareFunction, ComputePass, DrmFormat,
+    AddressMode, BindGroupLayoutEntry, CompareFunction, ComputePass,
     DrmFormatImageProperties, DrmModifier, Extent3d, Features, FilterMode, Limits, PlaneLayout,
     QuerySetDescriptor, RenderPass, Sampler, SamplerBorderColor, ShaderStage, SwapChainDescriptor,
     TextureAspect, TextureDimension, TextureFormat, TextureUsage, TextureViewDimension,

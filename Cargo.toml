@@ -10,13 +10,13 @@ edition = "2018"
 log = "*"
 wgpu_standard = {version="0.9",package="wgpu", optional=true}
 wgpu_custom = {git="https://github.com/Uniformbuffer3/wgpu",branch="external_memory_direct_display", package="wgpu", optional=true}
-pal = {version="*",git="https://github.com/Uniformbuffer3/platform_abstraction_layer.git",features=["xcb_platform","parry2d"],default-features=false,optional = true}
+pal = {version="*",git="https://github.com/Uniformbuffer3/platform_abstraction_layer.git",optional = true}
 vecstorage = "*"
 tokio = {version="*",features=["rt-multi-thread","sync"]}
 tokio-scoped = {git="https://github.com/jaboatman/tokio-scoped"}
 tokio-stream = "*"
 petgraph = "*"
-raw-window-handle = "*"
+raw-window-handle = "0.3.4"
 bytemuck = {version="*",features = ["derive"]}
 field-offset = "*"
 paste = "*"
