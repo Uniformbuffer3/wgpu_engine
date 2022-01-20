@@ -258,6 +258,7 @@ impl From<CommandBufferDescriptor> for ResourceDescriptor {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Resource write command.
 pub enum ResourceWrite {
     Buffer(BufferWrite),
     Texture(TextureWrite),

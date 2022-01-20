@@ -12,6 +12,7 @@ pub mod resource_manager;
 pub use resource_manager::ResourceManager;
 
 #[derive(Debug, Clone, Copy)]
+/// Possible engine errors.
 pub enum WGpuEngineError {
     InitializationFailed,
 }

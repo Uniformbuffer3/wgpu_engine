@@ -286,6 +286,8 @@ dependencies = [
 [[package]]
 name = "external-memory"
 version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e4dfe8d292b014422776a8c516862d2bff8a81b223a4461dfdc45f3862dc9d39"
 dependencies = [
  "bitflags",
  "drm-fourcc",
@@ -294,8 +296,7 @@ dependencies = [
 [[package]]
 name = "external-memory"
 version = "0.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4dfe8d292b014422776a8c516862d2bff8a81b223a4461dfdc45f3862dc9d39"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
  "bitflags",
  "drm-fourcc",
@@ -377,15 +378,6 @@ dependencies = [
 [[package]]
 name = "gfx-auxil"
 version = "0.10.0"
-dependencies = [
- "fxhash",
- "gfx-hal 0.9.0",
- "spirv_cross",
-]
-
-[[package]]
-name = "gfx-auxil"
-version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1694991b11d642680e82075a75c7c2bd75556b805efa7660b705689f05b1ab1c"
 dependencies = [
@@ -395,24 +387,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "gfx-backend-dx11"
-version = "0.9.0"
+name = "gfx-auxil"
+version = "0.10.0"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
- "arrayvec 0.5.2",
- "bitflags",
- "gfx-auxil 0.10.0",
- "gfx-hal 0.9.0",
- "gfx-renderdoc 0.1.0",
- "libloading",
- "log",
- "parking_lot",
- "range-alloc 0.1.2",
- "raw-window-handle",
- "smallvec",
+ "fxhash",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "spirv_cross",
- "thunderdome",
- "winapi",
- "wio",
 ]
 
 [[package]]
@@ -439,24 +420,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "gfx-backend-dx12"
-version = "0.9.1"
+name = "gfx-backend-dx11"
+version = "0.9.0"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
  "arrayvec 0.5.2",
- "bit-set",
  "bitflags",
- "d3d12",
- "gfx-auxil 0.10.0",
- "gfx-hal 0.9.0",
- "gfx-renderdoc 0.1.0",
+ "gfx-auxil 0.10.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-renderdoc 0.1.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "libloading",
  "log",
  "parking_lot",
- "range-alloc 0.1.2",
+ "range-alloc 0.1.2 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "raw-window-handle",
  "smallvec",
  "spirv_cross",
  "thunderdome",
  "winapi",
+ "wio",
 ]
 
 [[package]]
@@ -483,12 +465,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "gfx-backend-empty"
-version = "0.9.0"
+name = "gfx-backend-dx12"
+version = "0.9.1"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
- "gfx-hal 0.9.0",
+ "arrayvec 0.5.2",
+ "bit-set",
+ "bitflags",
+ "d3d12",
+ "gfx-auxil 0.10.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-renderdoc 0.1.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "log",
+ "parking_lot",
+ "range-alloc 0.1.2 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "raw-window-handle",
+ "smallvec",
+ "spirv_cross",
+ "thunderdome",
+ "winapi",
 ]
 
 [[package]]
@@ -503,23 +498,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "gfx-backend-gl"
+name = "gfx-backend-empty"
 version = "0.9.0"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
- "arrayvec 0.5.2",
- "bitflags",
- "fxhash",
- "gfx-hal 0.9.0",
- "glow",
- "js-sys",
- "khronos-egl",
- "libloading",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "log",
- "naga",
- "parking_lot",
  "raw-window-handle",
- "wasm-bindgen",
- "web-sys",
 ]
 
 [[package]]
@@ -545,27 +530,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "gfx-backend-metal"
-version = "0.9.1"
+name = "gfx-backend-gl"
+version = "0.9.0"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
  "arrayvec 0.5.2",
  "bitflags",
- "block",
- "cocoa-foundation",
- "copyless",
- "core-graphics-types",
- "foreign-types",
  "fxhash",
- "gfx-hal 0.9.0",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "glow",
+ "js-sys",
+ "khronos-egl",
+ "libloading",
  "log",
- "metal",
  "naga",
- "objc",
  "parking_lot",
- "profiling",
- "range-alloc 0.1.2",
  "raw-window-handle",
- "storage-map",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]
@@ -595,23 +577,28 @@ dependencies = [
 ]
 
 [[package]]
-name = "gfx-backend-vulkan"
-version = "0.9.0"
+name = "gfx-backend-metal"
+version = "0.9.1"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
  "arrayvec 0.5.2",
- "ash",
- "byteorder",
+ "bitflags",
+ "block",
+ "cocoa-foundation",
+ "copyless",
  "core-graphics-types",
- "gfx-hal 0.9.0",
- "gfx-renderdoc 0.1.0",
- "inplace_it",
+ "foreign-types",
+ "fxhash",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "log",
+ "metal",
  "naga",
  "objc",
  "parking_lot",
+ "profiling",
+ "range-alloc 0.1.2 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "raw-window-handle",
- "smallvec",
- "winapi",
+ "storage-map",
 ]
 
 [[package]]
@@ -637,14 +624,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "gfx-hal"
+name = "gfx-backend-vulkan"
 version = "0.9.0"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
- "bitflags",
- "external-memory 0.0.1",
+ "arrayvec 0.5.2",
+ "ash",
+ "byteorder",
+ "core-graphics-types",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-renderdoc 0.1.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "inplace_it",
+ "log",
  "naga",
+ "objc",
+ "parking_lot",
  "raw-window-handle",
- "thiserror",
+ "smallvec",
+ "winapi",
 ]
 
 [[package]]
@@ -661,8 +658,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "gfx-hal"
+version = "0.9.0"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
+dependencies = [
+ "bitflags",
+ "external-memory 0.0.1 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "naga",
+ "raw-window-handle",
+ "thiserror",
+]
+
+[[package]]
 name = "gfx-renderdoc"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c8027995e247e2426d3a00d13f5191dd56c314bff02dc4b54cbf727f1ba9c40a"
 dependencies = [
  "libloading",
  "log",
@@ -672,8 +683,7 @@ dependencies = [
 [[package]]
 name = "gfx-renderdoc"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8027995e247e2426d3a00d13f5191dd56c314bff02dc4b54cbf727f1ba9c40a"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 dependencies = [
  "libloading",
  "log",
@@ -1122,6 +1132,7 @@ dependencies = [
 [[package]]
 name = "pal"
 version = "0.1.0"
+source = "git+https://github.com/Uniformbuffer3/platform_abstraction_layer.git#b5e6b5bee092425dc1835b9412914b689208503b"
 dependencies = [
  "bitflags",
  "calloop",
@@ -1129,13 +1140,13 @@ dependencies = [
  "keystroke_decoder",
  "log",
  "parry2d",
- "petgraph 0.6.0",
+ "petgraph 0.5.1",
  "raw-window-handle",
  "simple-matrix",
  "smithay",
  "tokio",
- "wgpu 0.9.0",
  "wgpu 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "wgpu 0.9.0 (git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display)",
  "x11rb",
 ]
 
@@ -1298,12 +1309,13 @@ dependencies = [
 [[package]]
 name = "range-alloc"
 version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63e935c45e09cc6dcf00d2f0b2d630a58f4095320223d47fc68918722f0538b6"
 
 [[package]]
 name = "range-alloc"
 version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "63e935c45e09cc6dcf00d2f0b2d630a58f4095320223d47fc68918722f0538b6"
+source = "git+https://github.com/Uniformbuffer3/gfx?branch=fixes#3b760173e227cb2392d9a2d64b40cfea3982674e"
 
 [[package]]
 name = "raw-window-handle"
@@ -1725,24 +1737,6 @@ dependencies = [
 [[package]]
 name = "wgpu"
 version = "0.9.0"
-dependencies = [
- "arrayvec 0.5.2",
- "js-sys",
- "log",
- "naga",
- "parking_lot",
- "raw-window-handle",
- "smallvec",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "wgpu-core 0.9.1",
- "wgpu-types 0.9.0",
-]
-
-[[package]]
-name = "wgpu"
-version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bd247f8b26fd3d42ef2f320d378025cd6e84d782ef749fab45cc3b981fbe3275"
 dependencies = [
@@ -1761,21 +1755,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "wgpu"
+version = "0.9.0"
+source = "git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display#36b0fa5d68ea0a67f8cd2bfe9949b44777cf7f2d"
+dependencies = [
+ "arrayvec 0.5.2",
+ "js-sys",
+ "log",
+ "naga",
+ "parking_lot",
+ "raw-window-handle",
+ "smallvec",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "wgpu-core 0.9.1",
+ "wgpu-types 0.9.0 (git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display)",
+]
+
+[[package]]
 name = "wgpu-core"
 version = "0.9.1"
+source = "git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display#36b0fa5d68ea0a67f8cd2bfe9949b44777cf7f2d"
 dependencies = [
  "arrayvec 0.5.2",
  "bitflags",
  "cfg_aliases",
  "copyless",
  "fxhash",
- "gfx-backend-dx11 0.9.0",
- "gfx-backend-dx12 0.9.1",
- "gfx-backend-empty 0.9.0",
- "gfx-backend-gl 0.9.0",
- "gfx-backend-metal 0.9.1",
- "gfx-backend-vulkan 0.9.0",
- "gfx-hal 0.9.0",
+ "gfx-backend-dx11 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-backend-dx12 0.9.1 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-backend-empty 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-backend-gl 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-backend-metal 0.9.1 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-backend-vulkan 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
  "gpu-alloc",
  "gpu-descriptor",
  "log",
@@ -1785,7 +1799,7 @@ dependencies = [
  "raw-window-handle",
  "smallvec",
  "thiserror",
- "wgpu-types 0.9.0",
+ "wgpu-types 0.9.0 (git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display)",
 ]
 
 [[package]]
@@ -1821,18 +1835,19 @@ dependencies = [
 [[package]]
 name = "wgpu-types"
 version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f5c9678cd533558e28b416d66947b099742df1939307478db54f867137f1b60"
 dependencies = [
  "bitflags",
- "gfx-hal 0.9.0",
 ]
 
 [[package]]
 name = "wgpu-types"
 version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f5c9678cd533558e28b416d66947b099742df1939307478db54f867137f1b60"
+source = "git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display#36b0fa5d68ea0a67f8cd2bfe9949b44777cf7f2d"
 dependencies = [
  "bitflags",
+ "gfx-hal 0.9.0 (git+https://github.com/Uniformbuffer3/gfx?branch=fixes)",
 ]
 
 [[package]]
@@ -1854,8 +1869,8 @@ dependencies = [
  "tokio-scoped",
  "tokio-stream",
  "vecstorage",
- "wgpu 0.9.0",
  "wgpu 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "wgpu 0.9.0 (git+https://github.com/Uniformbuffer3/wgpu?branch=external_memory_direct_display)",
 ]
 
 [[package]]

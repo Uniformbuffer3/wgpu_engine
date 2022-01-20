@@ -55,6 +55,7 @@ impl HaveDescriptor for CommandBufferDescriptor {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Command to be written on [CommandBufferDescriptor][CommandBufferDescriptor] descriptor.
 pub enum Command {
     BufferToBuffer(BufferToBufferCopy),
     BufferToTexture(BufferToTextureCopy),
@@ -174,6 +175,8 @@ impl HaveDependencies for RenderPassColorAttachment {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Builder for commands to be written in a [ComputePass][crate::wgpu::ComputePass] object.
+/// Never used nor implemented.
 pub enum ComputeCommand {}
 impl HaveDependencies for ComputeCommand {
     fn dependencies(&self) -> Vec<EntityId> {
@@ -182,6 +185,7 @@ impl HaveDependencies for ComputeCommand {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Enumeration containing all the possible type of ranges.
 pub enum Slice<T> {
     Range(std::ops::Range<T>),
     RangeFrom(std::ops::RangeFrom<T>),
@@ -244,6 +248,7 @@ impl<T> From<std::ops::RangeToInclusive<T>> for Slice<T> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Builder for commands to be written in a [RenderPass][crate::wgpu::RenderPass] object.
 pub enum RenderCommand {
     SetPipeline {
         pipeline: RenderPipelineId,

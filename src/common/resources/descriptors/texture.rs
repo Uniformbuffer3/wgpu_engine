@@ -5,6 +5,7 @@ use crate::entity_manager::EntityId;
 use crate::resources::DeviceId;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Possible sources of a texture.
 pub enum TextureSource {
     #[cfg(feature = "wgpu_custom")]
     DmaBuf {

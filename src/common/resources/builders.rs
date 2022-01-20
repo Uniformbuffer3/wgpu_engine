@@ -6,6 +6,7 @@ use std::borrow::Cow::Borrowed;
 use std::ops::Range;
 use std::sync::{Arc, MutexGuard};
 
+/// Possible errors related to resource builders.
 pub enum ResourceBuilderError {
     MissingDependencies,
 }
@@ -1351,7 +1352,7 @@ impl ComputePipelineBuilder {
 }
 
 #[derive(Debug, Clone)]
-/// Builder for commands to be written in a [ComputePass][crate::wgpu::ComputePass] object.
+/// Builder for a [ComputeCommand][ComputeCommand] object.
 /// Never used nor implemented, so it will panic if used.
 pub enum ComputeCommandBuilder {}
 impl ComputeCommandBuilder {
@@ -1367,7 +1368,7 @@ impl ComputeCommandBuilder {
 }
 
 #[derive(Debug, Clone)]
-/// Builder for commands to be written in a [RenderPass][crate::wgpu::RenderPass] object.
+/// Builder for a [RenderCommand][RenderCommand] object.
 pub enum RenderCommandBuilder {
     SetPipeline {
         pipeline: RenderPipelineHandle,
@@ -1795,6 +1796,7 @@ impl BufferToBufferCopyBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [ColorView][ColorView] object.
 pub enum ColorViewBuilder {
     TextureView(TextureViewHandle),
     Swapchain(SwapchainHandle),
@@ -1887,6 +1889,7 @@ impl RenderPassColorAttachmentBuilder {
 }
 
 #[derive(Debug, Clone)]
+/// Builder for a [ColorTarget][ColorTarget] object.
 pub enum ColorTargetBuilder {
     Swapchain(SwapchainHandle),
     TextureView(TextureViewHandle),

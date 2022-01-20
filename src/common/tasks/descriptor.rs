@@ -1,6 +1,7 @@
 use crate::common::*;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Descriptor of a Task.
 pub struct TaskDescriptor {
     pub name: String,
     pub broken: bool,

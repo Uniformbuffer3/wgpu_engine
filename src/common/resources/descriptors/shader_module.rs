@@ -5,6 +5,7 @@ use crate::entity_manager::EntityId;
 use crate::resources::DeviceId;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Possible data sources of a shader.
 pub enum ShaderSource {
     SpirV(Vec<u32>),
     Wgsl(String),

@@ -141,6 +141,7 @@ macro_rules! make_resource_ids {
             crate::common::make_id![$($name),*];
 
             #[derive(Clone,Copy,PartialEq)]
+            /// Enumeration containing all the possible resource id identifiers.
             pub enum ResourceId {
                 $(
                     [<$name:camel>]([<$name:camel Id>]),
@@ -184,6 +185,7 @@ macro_rules! make_resource_ids {
 
 
             #[derive(Clone,Copy,PartialEq)]
+            /// Enumeration containing all the possible resource id identifiers reference.
             pub enum ResourceIdRef<'a> {
                 $(
                     [<$name:camel>](&'a [<$name:camel Id>]),
@@ -216,6 +218,7 @@ macro_rules! make_resource_ids {
             }
 
             #[derive(PartialEq)]
+            /// Enumeration containing all the possible resource id identifiers mutable reference.
             pub enum ResourceIdMut<'a> {
                 $(
                     [<$name:camel>](&'a mut [<$name:camel Id>]),
@@ -290,6 +293,7 @@ make_resource_ids!(
     CommandBuffer
 );
 
+/// All the possible resource types.
 pub enum ResourceType {
     Instance,
     Device,
